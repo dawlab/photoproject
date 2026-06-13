@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin – 365</title>
-<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-<link rel="stylesheet" href="/static/css/main.css">
+<link rel="icon" type="image/svg+xml" href="static/favicon.svg">
+<link rel="stylesheet" href="static/css/main.css">
 </head>
 <body>
 
 <header class="site-header">
-  <a href="/" class="logo">365</a>
+  <a href="index.html" class="logo">365</a>
   <nav class="site-nav" id="adminNav">
     <a href="#photos"    class="nav-link admin-tab active" data-tab="photos">Zdjęcia</a>
     <a href="#galleries" class="nav-link admin-tab" data-tab="galleries">Galerie</a>
@@ -231,12 +231,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
-<script src="/static/js/supabase.js"></script>
+<script src="static/js/supabase.js"></script>
 <script>
 // ─── Auth guard ───────────────────────────────────────────────────────────────
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) location.href = '/login.html';
+  if (!session) location.href = 'login.html';
 })();
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -304,7 +304,7 @@ document.querySelectorAll('.admin-tab').forEach(tab => {
 })();
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
-const doLogout = async () => { await sb.auth.signOut(); location.href = '/login.html'; };
+const doLogout = async () => { await sb.auth.signOut(); location.href = 'login.html'; };
 document.getElementById('logoutBtn').addEventListener('click', doLogout);
 document.getElementById('overlayLogoutBtn').addEventListener('click', doLogout);
 

@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Logowanie – 365</title>
-<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-<link rel="stylesheet" href="/static/css/main.css">
+<link rel="icon" type="image/svg+xml" href="static/favicon.svg">
+<link rel="stylesheet" href="static/css/main.css">
 </head>
 <body>
 <div class="login-wrap">
-  <a href="/" class="logo login-logo">365</a>
+  <a href="index.html" class="logo login-logo">365</a>
   <h1 class="login-heading">Panel administracyjny</h1>
   <form id="loginForm" class="login-form">
     <label class="form-label">Email
@@ -24,11 +24,11 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/static/js/supabase.js"></script>
+<script src="static/js/supabase.js"></script>
 <script>
 // Redirect if already logged in
 sb.auth.getSession().then(({ data: { session } }) => {
-  if (session) location.href = '/admin.html';
+  if (session) location.href = 'admin.html';
 });
 
 document.getElementById('loginForm').addEventListener('submit', async e => {
@@ -40,7 +40,7 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
     password: document.getElementById('passInput').value,
   });
   if (error) { err.textContent = 'Błędny email lub hasło.'; err.style.display = 'block'; }
-  else location.href = '/admin.html';
+  else location.href = 'admin.html';
 });
 </script>
 </body>

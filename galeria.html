@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Galeria – 365</title>
-<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-<link rel="stylesheet" href="/static/css/main.css">
+<link rel="icon" type="image/svg+xml" href="static/favicon.svg">
+<link rel="stylesheet" href="static/css/main.css">
 </head>
 <body>
 
@@ -13,9 +13,9 @@
 <main id="app"><div class="spinner"></div></main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/static/js/supabase.js"></script>
-<script src="/static/js/header.js"></script>
-<script src="/static/js/utils.js"></script>
+<script src="static/js/supabase.js"></script>
+<script src="static/js/header.js"></script>
+<script src="static/js/utils.js"></script>
 <script>
 const gid = new URLSearchParams(location.search).get('id');
 function plural(n) { return n === 1 ? 'zdjęcie' : n >= 2 && n <= 4 ? 'zdjęcia' : 'zdjęć'; }
@@ -35,7 +35,7 @@ async function load() {
   const app = document.getElementById('app');
   app.innerHTML = `
     <div class="gallery-header">
-      <a href="/galerie.html" class="back-link">← Wszystkie galerie</a>
+      <a href="galerie.html" class="back-link">← Wszystkie galerie</a>
       <h1 class="gallery-page-title">${g.title}</h1>
       ${g.description ? `<p class="gallery-desc">${g.description}</p>` : ''}
       <p class="gallery-meta">${photos.length} ${plural(photos.length)}</p>

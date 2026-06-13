@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>365</title>
-<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-<link rel="stylesheet" href="/static/css/main.css">
+<link rel="icon" type="image/svg+xml" href="static/favicon.svg">
+<link rel="stylesheet" href="static/css/main.css">
 </head>
 <body>
 
@@ -16,10 +16,10 @@
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/static/js/supabase.js"></script>
-<script src="/static/js/header.js"></script>
-<script src="/static/js/moods.js"></script>
-<script src="/static/js/utils.js"></script>
+<script src="static/js/supabase.js"></script>
+<script src="static/js/header.js"></script>
+<script src="static/js/moods.js"></script>
+<script src="static/js/utils.js"></script>
 <script>
 const id = new URLSearchParams(location.search).get('id');
 
@@ -53,7 +53,7 @@ async function loadMemories() {
   if (!memories.length) return;
   const inner = document.getElementById('memoriesInner');
   inner.innerHTML = memories.map(m => `
-    <a href="/photo.html?id=${m.id}" class="memory-card">
+    <a href="photo.html?id=${m.id}" class="memory-card">
       <div class="memory-img"><img src="${thumbUrl(m.thumb)}" alt="${m.title}" loading="lazy"></div>
       <span class="memory-label">${m.label}</span>
     </a>`).join('');
@@ -92,7 +92,7 @@ async function load() {
 
   document.getElementById('app').innerHTML = `
     <div class="photo-nav">
-      <a href="/" class="back-link">← Wszystkie zdjęcia</a>
+      <a href="index.html" class="back-link">← Wszystkie zdjęcia</a>
       <span class="day-badge">Dzień ${p.day}</span>
     </div>
     <div class="photo-layout">

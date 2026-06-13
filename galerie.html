@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Galerie – 365</title>
-<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-<link rel="stylesheet" href="/static/css/main.css">
+<link rel="icon" type="image/svg+xml" href="static/favicon.svg">
+<link rel="stylesheet" href="static/css/main.css">
 </head>
 <body>
 
 <div id="header-placeholder"></div>
 <div class="profile-hero" id="profileHero"></div>
 <div class="page-tabs">
-  <a href="/" class="page-tab"><span id="tabPhotosCount">–</span> zdjęć</a>
-  <a href="/galerie.html" class="page-tab active"><span id="tabGalCount">–</span> galerii</a>
-  <a href="/nastroje.html" class="page-tab">Nastroje i nawyki</a>
+  <a href="index.html" class="page-tab"><span id="tabPhotosCount">–</span> zdjęć</a>
+  <a href="galerie.html" class="page-tab active"><span id="tabGalCount">–</span> galerii</a>
+  <a href="nastroje.html" class="page-tab">Nastroje i nawyki</a>
 </div>
 <main>
   <div class="galleries-grid" id="galleriesGrid"></div>
@@ -22,9 +22,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/static/js/supabase.js"></script>
-<script src="/static/js/header.js"></script>
-<script src="/static/js/profile.js"></script>
+<script src="static/js/supabase.js"></script>
+<script src="static/js/header.js"></script>
+<script src="static/js/profile.js"></script>
 <script>
 function plural(n) { return n === 1 ? 'zdjęcie' : n >= 2 && n <= 4 ? 'zdjęcia' : 'zdjęć'; }
 
