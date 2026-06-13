@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Galerie – 365</title>
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+<div class="profile-hero" id="profileHero"></div>
+<div class="page-tabs">
+  <a href="/" class="page-tab"><span id="tabPhotosCount">–</span> zdjęć</a>
+  <a href="/galerie.html" class="page-tab active"><span id="tabGalCount">–</span> galerii</a>
+  <a href="/nastroje.html" class="page-tab">Nastroje i nawyki</a>
+</div>
+<main>
+  <div class="galleries-grid" id="galleriesGrid"></div>
+  <p class="empty" id="empty" style="display:none">Brak galerii.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/static/js/supabase.js"></script>
+<script src="/static/js/header.js"></script>
+<script src="/static/js/profile.js"></script>
+<script>
+function plural(n) { return n === 1 ? 'zdjęcie' : n >= 2 && n <= 4 ? 'zdjęcia' : 'zdjęć'; }
+
+async function load() {
+  const { data: galleries } = await sb.from('galleries')
+    .select('*, gallery_photos(count), cover:cover_photo_id(thumb)')
+    .order('created_at', { ascending: false });
+
+  const grid = document.getElementById('galleriesGrid');
+  if (!galleries || !galleries.length) { document.getElementById('empty').style.display = 'block'; return; }
+
+  galleries.forEach(g => {
+    const count = g.gallery_photos?.[0]?.count ?? 0;
+    const coverThumb = g.cover?.thumb;
+    const a = document.createElement('a');
+    a.className = 'gallery-card';
+    a.href = `/galeria.html?id=${g.id}`;
+    const cover = coverThumb
+      ? `<img src="${thumbUrl(coverThumb)}" alt="${g.title}" loading="lazy">`
+      : `<div class="gallery-no-cover"></div>`;
+    a.innerHTML = `
+      <div class="gallery-cover">${cover}</div>
+      <div class="gallery-info">
+        <span class="gallery-title">${g.title}</span>
+        <span class="gallery-count">${count} ${plural(count)}</span>
+      </div>`;
+    grid.appendChild(a);
+  });
+}
+
+loadProfile('profileHero', 'tabPhotosCount', 'tabGalCount');
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>365</title>
+<meta name="description" content="Codziennie jedno zdjęcie.">
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+
+<div class="profile-hero" id="profileHero"></div>
+
+<div class="page-tabs">
+  <a href="/" class="page-tab active"><span id="tabPhotosCount">–</span> zdjęć</a>
+  <a href="/galerie.html" class="page-tab"><span id="tabGalCount">–</span> galerii</a>
+  <a href="/nastroje.html" class="page-tab">Nastroje i nawyki</a>
+</div>
+
+<main>
+  <div class="photo-feed" id="feed"></div>
+  <div class="load-more-wrap" id="loadWrap" style="display:none">
+    <button class="btn-load" id="loadBtn">Załaduj więcej</button>
+  </div>
+  <p class="empty" id="empty" style="display:none">Brak zdjęć.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/static/js/supabase.js"></script>
+<script src="/static/js/header.js"></script>
+<script src="/static/js/profile.js"></script>
+<script src="/static/js/utils.js"></script>
+<script>
+let page = 1;
+const per = 30;
+
+async function loadPhotos() {
+  const from = (page - 1) * per;
+  const { data, count } = await sb.from('photos')
+    .select('*', { count: 'exact' })
+    .order('day', { ascending: false })
+    .range(from, from + per - 1);
+
+  const feed = document.getElementById('feed');
+  if ((!data || !data.length) && page === 1) {
+    document.getElementById('empty').style.display = 'block'; return;
+  }
+  (data || []).forEach(p => {
+    const a = document.createElement('a');
+    a.className = 'feed-card';
+    a.href = `/photo.html?id=${p.id}`;
+    if (p.width && p.height) a.style.flexGrow = (p.width / p.height).toFixed(4);
+    const date = photoDate(p);
+    a.innerHTML = `
+      <div class="feed-card__img">
+        <img src="${thumbUrl(p.thumb)}" alt="${p.title}" loading="lazy">
+      </div>
+      <div class="feed-card__meta">
+        <div class="card-meta-top">
+          <span class="day-num">Dzień ${p.day}</span>
+          ${date ? `<span class="card-date">${date}</span>` : ''}
+        </div>
+        <span class="card-title">${p.title}</span>
+      </div>`;
+    feed.appendChild(a);
+  });
+  page++;
+  document.getElementById('loadWrap').style.display = (page - 1) * per < (count || 0) ? 'flex' : 'none';
+}
+
+document.getElementById('loadBtn').addEventListener('click', loadPhotos);
+loadProfile('profileHero', 'tabPhotosCount', 'tabGalCount');
+loadPhotos();
+</script>
+</body>
+</html>

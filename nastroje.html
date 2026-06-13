@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nastroje i nawyki – 365</title>
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+<div class="profile-hero" id="profileHero"></div>
+<div class="page-tabs">
+  <a href="/" class="page-tab"><span id="tabPhotosCount">–</span> zdjęć</a>
+  <a href="/galerie.html" class="page-tab"><span id="tabGalCount">–</span> galerii</a>
+  <a href="/nastroje.html" class="page-tab active">Nastroje i nawyki</a>
+</div>
+
+<main class="moods-page">
+  <div class="moods-toolbar">
+    <div class="mood-legend" id="moodLegend"></div>
+    <div class="moods-filters">
+      <select id="viewSelect" class="year-select">
+        <option value="moods">Nastroje</option>
+      </select>
+      <select id="yearSelect" class="year-select"></select>
+    </div>
+  </div>
+  <div id="calendarWrap"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/static/js/supabase.js"></script>
+<script src="/static/js/header.js"></script>
+<script src="/static/js/profile.js"></script>
+<script src="/static/js/moods.js"></script>
+<script>
+const MONTH_NAMES = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+let currentYear = null;
+let currentView = 'moods';
+let allPhotos = [];
+
+async function initViewSelect() {
+  const { data: habits } = await sb.from('habits').select('*').eq('active', true).order('id');
+  const sel = document.getElementById('viewSelect');
+  (habits || []).forEach(h => {
+    const opt = document.createElement('option');
+    opt.value = `habit_${h.id}`; opt.textContent = h.name;
+    sel.appendChild(opt);
+  });
+}
+
+async function loadStats(year, view) {
+  if (!allPhotos.length) {
+    const { data } = await sb.from('photos').select('id, day, mood, shot_at, created_at').order('shot_at');
+    allPhotos = data || [];
+  }
+
+  const years = [...new Set(allPhotos.map(p => {
+    const dt = p.shot_at || p.created_at;
+    return dt ? new Date(dt).getFullYear() : null;
+  }).filter(Boolean))].sort((a, b) => b - a);
+
+  const sel = document.getElementById('yearSelect');
+  if (!sel.options.length) {
+    years.forEach(y => {
+      const o = document.createElement('option');
+      o.value = y; o.textContent = y;
+      if (String(y) === String(year)) o.selected = true;
+      sel.appendChild(o);
+    });
+    if (!year && years.length) { currentYear = years[0]; sel.value = currentYear; }
+  }
+
+  const filtered = year
+    ? allPhotos.filter(p => { const dt = p.shot_at || p.created_at; return dt && new Date(dt).getFullYear() === parseInt(year); })
+    : allPhotos;
+
+  if (view && view.startsWith('habit_')) {
+    const habitId = parseInt(view.replace('habit_', ''));
+    const { data: logs } = await sb.from('habit_logs').select('*').eq('habit_id', habitId);
+    const logMap = {};
+    (logs || []).forEach(l => { logMap[l.photo_id] = l.done; });
+
+    const calendar = filtered
+      .filter(p => logMap[p.id] !== undefined)
+      .map(p => ({ date: (p.shot_at || p.created_at)?.slice(0, 10), done: logMap[p.id], id: p.id }))
+      .filter(e => e.date);
+
+    renderHabitLegend(calendar.filter(e => e.done).length, calendar.filter(e => !e.done).length);
+    renderHabitCalendar(calendar, year || currentYear);
+  } else {
+    const moodCounts = {};
+    const calendar = filtered.map(p => ({
+      date: (p.shot_at || p.created_at)?.slice(0, 10), mood: p.mood, id: p.id
+    })).filter(e => e.date);
+
+    calendar.forEach(e => { if (e.mood) moodCounts[e.mood] = (moodCounts[e.mood] || 0) + 1; });
+    const total = Object.values(moodCounts).reduce((a, b) => a + b, 0) || 1;
+    const moods = {};
+    Object.entries(moodCounts).forEach(([k, v]) => { moods[k] = Math.round(v / total * 100); });
+
+    renderMoodLegend(moods);
+    renderMoodCalendar(calendar, year || currentYear);
+  }
+}
+
+function renderMoodLegend(moods) {
+  document.getElementById('moodLegend').innerHTML = Object.entries(MOODS).map(([k, m]) =>
+    `<div class="legend-item">${moodSvg(k, 40)}<span class="legend-pct">${moods[k] ?? 0}%</span></div>`
+  ).join('');
+}
+
+function renderHabitLegend(done, fail) {
+  document.getElementById('moodLegend').innerHTML = `
+    <div class="habit-stat habit-stat--done"><span class="habit-stat-icon">✓</span><span class="habit-stat-num">${done}</span><span class="habit-stat-label">dni zrealizowano</span></div>
+    <div class="habit-stat habit-stat--fail"><span class="habit-stat-icon">✗</span><span class="habit-stat-num">${fail}</span><span class="habit-stat-label">dni nie udało się</span></div>`;
+}
+
+function renderMoodCalendar(entries, year) {
+  const map = {};
+  entries.forEach(e => { if (e.date) map[e.date] = { mood: e.mood, id: e.id }; });
+  renderGrid(year, (dateStr, dots) => {
+    const entry = map[dateStr];
+    const dot = document.createElement('div');
+    dot.className = 'cal-dot';
+    if (entry && MOODS[entry.mood]) {
+      dot.style.background = MOODS[entry.mood].color;
+      dot.title = `${dateStr} — ${MOODS[entry.mood].label}`;
+      dot.classList.add('cal-dot--filled');
+      dot.addEventListener('click', () => location.href = `/photo.html?id=${entry.id}`);
+    } else { dot.classList.add('cal-dot--none'); }
+    dots.appendChild(dot);
+  });
+}
+
+function renderHabitCalendar(entries, year) {
+  const map = {};
+  entries.forEach(e => { if (e.date) map[e.date] = { done: e.done, id: e.id }; });
+  renderGrid(year, (dateStr, dots) => {
+    const entry = map[dateStr];
+    const dot = document.createElement('div');
+    dot.className = 'cal-dot';
+    if (entry !== undefined) {
+      dot.classList.add(entry.done ? 'cal-dot--habit-done' : 'cal-dot--habit-fail', 'cal-dot--filled');
+      dot.title = `${dateStr} — ${entry.done ? 'Zrealizowano ✓' : 'Nie udało się ✗'}`;
+      dot.addEventListener('click', () => location.href = `/photo.html?id=${entry.id}`);
+    } else { dot.classList.add('cal-dot--none'); }
+    dots.appendChild(dot);
+  });
+}
+
+function renderGrid(year, buildDot) {
+  const wrap = document.getElementById('calendarWrap');
+  wrap.innerHTML = '';
+  if (!year) return;
+  const grid = document.createElement('div');
+  grid.className = 'cal-grid';
+  for (let m = 11; m >= 0; m--) {
+    const div = document.createElement('div'); div.className = 'cal-month';
+    div.innerHTML = `<div class="cal-month-name">${MONTH_NAMES[m].toUpperCase()}</div>`;
+    const dots = document.createElement('div'); dots.className = 'cal-dots';
+    const offset = (new Date(year, m, 1).getDay() + 6) % 7;
+    for (let i = 0; i < offset; i++) {
+      const b = document.createElement('div'); b.className = 'cal-dot cal-dot--empty'; dots.appendChild(b);
+    }
+    const days = new Date(year, m + 1, 0).getDate();
+    for (let d = 1; d <= days; d++) {
+      const dateStr = `${year}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      buildDot(dateStr, dots);
+    }
+    div.appendChild(dots); grid.appendChild(div);
+  }
+  wrap.appendChild(grid);
+}
+
+document.getElementById('yearSelect').addEventListener('change', e => { currentYear = e.target.value; loadStats(currentYear, currentView); });
+document.getElementById('viewSelect').addEventListener('change', e => { currentView = e.target.value; loadStats(currentYear, currentView); });
+
+loadProfile('profileHero', 'tabPhotosCount', 'tabGalCount');
+initViewSelect();
+currentYear = new URLSearchParams(location.search).get('year') || null;
+loadStats(currentYear, 'moods');
+</script>
+</body>
+</html>
