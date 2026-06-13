@@ -41,7 +41,7 @@ async function load() {
     const coverThumb = g.cover?.thumb;
     const a = document.createElement('a');
     a.className = 'gallery-card';
-    a.href = `/galeria.html?id=${g.id}`;
+    a.href = `galeria.html?id=${g.id}`;
     const cover = coverThumb
       ? `<img src="${thumbUrl(coverThumb)}" alt="${g.title}" loading="lazy">`
       : `<div class="gallery-no-cover"></div>`;

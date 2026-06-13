@@ -13,31 +13,27 @@ function thumbUrl(filename) {
   return sb.storage.from('thumbnails').getPublicUrl(filename).data.publicUrl;
 }
 
-// Resize image client-side using Canvas, returns a Blob (webp)
-function resizeImage(file, maxSide, quality = 0.82) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      let { width, height } = img;
-      if (width > maxSide || height > maxSide) {
-        if (width >= height) { height = Math.round(height * maxSide / width); width = maxSide; }
-        else { width = Math.round(width * maxSide / height); height = maxSide; }
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = width; canvas.height = height;
-      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-      canvas.toBlob(resolve, 'image/webp', quality);
-    };
-    img.src = URL.createObjectURL(file);
-  });
+// Resize image client-side, respecting EXIF orientation, returns a Blob (webp)
+async function resizeImage(file, maxSide, quality = 0.82) {
+  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+  let { width, height } = bitmap;
+  if (width > maxSide || height > maxSide) {
+    if (width >= height) { height = Math.round(height * maxSide / width); width = maxSide; }
+    else { width = Math.round(width * maxSide / height); height = maxSide; }
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = width; canvas.height = height;
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
+  bitmap.close();
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/webp', quality));
 }
 
-// Get original image dimensions
-function getImageSize(file) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
-    img.onerror = () => resolve({ width: null, height: null });
-    img.src = URL.createObjectURL(file);
-  });
+// Get image dimensions respecting EXIF orientation
+async function getImageSize(file) {
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const { width, height } = bitmap;
+    bitmap.close();
+    return { width, height };
+  } catch { return { width: null, height: null }; }
 }

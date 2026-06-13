@@ -51,7 +51,7 @@ async function loadPhotos() {
   (data || []).forEach(p => {
     const a = document.createElement('a');
     a.className = 'feed-card';
-    a.href = `/photo.html?id=${p.id}`;
+    a.href = `photo.html?id=${p.id}`;
     if (p.width && p.height) a.style.flexGrow = (p.width / p.height).toFixed(4);
     const date = photoDate(p);
     a.innerHTML = `
