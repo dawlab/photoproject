@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>{% include '_head.html' %}</head>
+<body>
+<header class="site-header">
+  <a href="/" class="logo">365</a>
+  <nav class="site-nav" id="adminNav">
+    <a href="#photos" class="nav-link admin-tab active" data-tab="photos">Zdjęcia</a>
+    <a href="#galleries" class="nav-link admin-tab" data-tab="galleries">Galerie</a>
+    <a href="#profile" class="nav-link admin-tab" data-tab="profile">Profil</a>
+    <a href="#menu" class="nav-link admin-tab" data-tab="menu">Menu</a>
+    <a href="#habits" class="nav-link admin-tab" data-tab="habits">Nawyki</a>
+    <a href="#seo" class="nav-link admin-tab" data-tab="seo">SEO</a>
+    <a href="#password" class="nav-link admin-tab" data-tab="password">Hasło</a>
+  </nav>
+  <div class="admin-header-right">
+    <button class="btn-logout" id="logoutBtn">Wyloguj</button>
+    <button class="hamburger" id="adminHamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="nav-overlay" id="adminOverlay">
+  <button class="nav-overlay__close" id="adminOverlayClose" aria-label="Zamknij">✕</button>
+  <nav class="nav-overlay__links" id="adminOverlayLinks">
+    <a href="#photos" class="nav-overlay__link admin-tab active" data-tab="photos">Zdjęcia</a>
+    <a href="#galleries" class="nav-overlay__link admin-tab" data-tab="galleries">Galerie</a>
+    <a href="#profile" class="nav-overlay__link admin-tab" data-tab="profile">Profil</a>
+    <a href="#menu" class="nav-overlay__link admin-tab" data-tab="menu">Menu</a>
+    <a href="#habits" class="nav-overlay__link admin-tab" data-tab="habits">Nawyki</a>
+    <a href="#seo" class="nav-overlay__link admin-tab" data-tab="seo">SEO</a>
+    <a href="#password" class="nav-overlay__link admin-tab" data-tab="password">Hasło</a>
+    <div style="border-top:1px solid var(--border);margin:1rem 1.75rem"></div>
+    <button class="nav-overlay__link" id="overlayLogoutBtn" style="background:none;border:none;cursor:pointer;text-align:left;color:var(--muted);font-size:1.1rem;font-weight:500">Wyloguj</button>
+  </nav>
+</div>
+
+<!-- ═══ ZDJĘCIA ═══════════════════════════════════════════════════════════════ -->
+<main class="admin-page" id="tabPhotos">
+  <h2 class="admin-heading">Dodaj zdjęcie</h2>
+
+  <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" name="photo" accept="image/*" hidden>
+      <div class="drop-inner" id="dropInner">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4-4 4 4 4-8 4 8"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+        <p>Przeciągnij zdjęcie lub <button type="button" id="browseBtn">wybierz plik</button></p>
+        <p class="drop-hint">JPG, PNG, WEBP · max 50 MB</p>
+      </div>
+      <img id="preview" class="drop-preview" style="display:none" alt="podgląd">
+    </div>
+
+    <div class="form-row">
+      <label>Dzień <span class="req">*</span>
+        <input type="number" name="day" id="dayInput" min="1" max="9999" placeholder="np. 1" required>
+      </label>
+      <label>Data zdjęcia
+        <input type="date" name="manual_date" id="manualDate">
+      </label>
+    </div>
+
+    <label class="form-label">Tytuł <span class="req">*</span>
+      <input type="text" name="title" placeholder="Wpisz tytuł" required>
+    </label>
+
+    <label class="form-label">Opis
+      <textarea name="description" rows="4" placeholder="Kilka słów o tym zdjęciu…"></textarea>
+    </label>
+
+    <label class="form-label">Humor
+      <select name="mood">
+        <option value="">— wybierz —</option>
+        <option value="great">Świetny</option>
+        <option value="good">Dobry</option>
+        <option value="meh">Nic specjalnego</option>
+        <option value="bad">Zły</option>
+        <option value="awful">Okropny</option>
+      </select>
+    </label>
+
+    <div id="habitsCheckboxes" class="habits-checkboxes" style="display:none">
+      <p class="form-label" style="margin-bottom:.5rem;font-weight:600">Nawyki</p>
+      <div id="habitsCheckboxList"></div>
+    </div>
+
+    <div id="formMsg" class="form-msg" style="display:none"></div>
+    <button type="submit" class="btn-submit" id="submitBtn">Zapisz zdjęcie</button>
+  </form>
+
+  <hr class="divider">
+  <h2 class="admin-heading">Wszystkie zdjęcia</h2>
+  <div class="admin-grid" id="adminGrid"></div>
+</main>
+
+<!-- ═══ GALERIE ═══════════════════════════════════════════════════════════════ -->
+<main class="admin-page" id="tabGalleries" style="display:none">
+  <h2 class="admin-heading">Utwórz galerię</h2>
+  <form id="galleryForm" class="upload-form">
+    <label class="form-label">Tytuł galerii <span class="req">*</span>
+      <input type="text" id="galleryTitle" placeholder="np. Jesień 2024" required>
+    </label>
+    <label class="form-label">Opis
+      <textarea id="galleryDesc" rows="3" placeholder="Opcjonalny opis galerii…"></textarea>
+    </label>
+    <div id="galleryMsg" class="form-msg" style="display:none"></div>
+    <button type="submit" class="btn-submit">Utwórz galerię</button>
+  </form>
+
+  <hr class="divider">
+  <h2 class="admin-heading">Twoje galerie</h2>
+  <div id="galleriesList"></div>
+</main>
+
+<!-- ═══ PROFIL ═════════════════════════════════════════════════════════════════ -->
+<main class="admin-page" id="tabProfile" style="display:none">
+  <h2 class="admin-heading">Edytuj profil</h2>
+
+  <div class="profile-avatar-section">
+    <div id="avatarPreview" class="profile-avatar-admin"></div>
+    <div>
+      <input type="file" id="avatarInput" accept="image/*" hidden>
+      <button class="btn-submit" type="button" id="avatarBtn">Zmień avatar</button>
+      <p class="drop-hint" style="margin-top:6px">JPG, PNG, WEBP · zalecane 300×300 px</p>
+    </div>
+  </div>
+
+  <form id="profileForm" class="upload-form" style="margin-top:1.5rem">
+    <label class="form-label">Imię / nazwa wyświetlana
+      <input type="text" id="profileName" placeholder="np. Jan Kowalski">
+    </label>
+    <label class="form-label">Bio
+      <textarea id="profileBio" rows="3" placeholder="Kilka słów o sobie…"></textarea>
+    </label>
+    <div class="form-row">
+      <label>Lokalizacja
+        <input type="text" id="profileLocation" placeholder="np. Warszawa, Polska">
+      </label>
+      <label>Strona www
+        <input type="url" id="profileWebsite" placeholder="https://…">
+      </label>
+    </div>
+    <div class="form-row">
+      <label>Tekst przycisku „Obserwuj"
+        <input type="text" id="profileFollowLabel" placeholder="np. Obserwuj">
+      </label>
+      <label>URL przycisku „Obserwuj"
+        <input type="url" id="profileFollowUrl" placeholder="https://… (zostaw puste = nieaktywny)">
+      </label>
+    </div>
+    <div id="profileMsg" class="form-msg" style="display:none"></div>
+    <button type="submit" class="btn-submit">Zapisz profil</button>
+  </form>
+</main>
+
+<!-- ═══ MENU ══════════════════════════════════════════════════════════════════ -->
+<main class="admin-page" id="tabMenu" style="display:none">
+  <h2 class="admin-heading">Dodaj link do menu</h2>
+  <form id="menuForm" class="upload-form">
+    <div class="form-row">
+      <label>Tytuł <span class="req">*</span>
+        <input type="text" id="menuTitle" placeholder="np. Blog">
+      </label>
+      <label>URL <span class="req">*</span>
+        <input type="text" id="menuUrl" placeholder="np. https://blog.pl lub /galerie">
+      </label>
+    </div>
+    <div id="menuMsg" class="form-msg" style="display:none"></div>
+    <button type="submit" class="btn-submit">Dodaj link</button>
+  </form>
+  <hr class="divider">
+  <h2 class="admin-heading">Linki w menu</h2>
+  <p class="drop-hint" style="margin-bottom:1rem">Kolejność wyświetlania ustalana jest przez pozycję.</p>
+  <div id="menuList"></div>
+</main>
+
+<!-- ═══ NAWYKI ════════════════════════════════════════════════════════════════ -->
+<main class="admin-page" id="tabHabits" style="display:none">
+  <h2 class="admin-heading">Dodaj nawyk</h2>
+  <form id="habitForm" class="upload-form">
+    <label class="form-label">Nazwa nawyku <span class="req">*</span>
+      <input type="text" id="habitName" placeholder="np. 10 000 kroków">
+    </label>
+    <label class="form-label">Opis (opcjonalny)
+      <input type="text" id="habitDesc" placeholder="np. Codzienny spacer">
+    </label>
+    <div id="habitMsg" class="form-msg" style="display:none"></div>
+    <button type="submit" class="btn-submit">Dodaj nawyk</button>
+  </form>
+
+  <hr class="divider">
+  <h2 class="admin-heading">Twoje nawyki</h2>
+  <div id="habitsList"></div>
+</main>
+
+<!-- ═══ SEO ════════════════════════════════════════════════════════════════════ -->
+<main class="admin-page" id="tabSeo" style="display:none">
+  <h2 class="admin-heading">SEO i udostępnianie</h2>
+  <form id="seoForm" class="upload-form">
+    <label class="form-label">Meta title (tytuł strony w przeglądarce i Google)
+      <input type="text" id="seoTitle" placeholder="np. Dawid – projekt 365">
+    </label>
+    <label class="form-label">Meta description (opis w wynikach wyszukiwania)
+      <textarea id="seoDesc" rows="3" placeholder="Krótki opis strony, ok. 150 znaków…"></textarea>
+    </label>
+    <label class="form-label">OG Image (URL zdjęcia do podglądu przy udostępnianiu)
+      <input type="text" id="seoOgImage" placeholder="np. avatar.webp (nazwa pliku z uploads)">
+      <span class="drop-hint">Wpisz nazwę pliku który już wgrałeś jako zdjęcie lub avatar</span>
+    </label>
+    <div id="seoMsg" class="form-msg" style="display:none"></div>
+    <button type="submit" class="btn-submit">Zapisz SEO</button>
+  </form>
+</main>
+
+<!-- ═══ HASŁO ═══════════════════════════════════════════════════════════════════ -->
+<main class="admin-page" id="tabPassword" style="display:none">
+  <h2 class="admin-heading">Zmień hasło do CMS</h2>
+  <form id="passwordForm" class="upload-form" style="max-width:420px">
+    <label class="form-label">Obecne hasło
+      <input type="password" id="pwCurrent" placeholder="Wpisz obecne hasło">
+    </label>
+    <label class="form-label">Nowe hasło
+      <input type="password" id="pwNew" placeholder="Min. 6 znaków">
+    </label>
+    <label class="form-label">Powtórz nowe hasło
+      <input type="password" id="pwConfirm" placeholder="Powtórz nowe hasło">
+    </label>
+    <div id="pwMsg" class="form-msg" style="display:none"></div>
+    <button type="submit" class="btn-submit">Zmień hasło</button>
+  </form>
+</main>
+
+<!-- ═══ MODAL edycji zdjęcia ══════════════════════════════════════════════════ -->
+<div id="editModal" class="modal" style="display:none">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">✕</button>
+    <h3 class="modal-title">Edytuj zdjęcie</h3>
+    <input type="hidden" id="editId">
+    <label class="form-label">Tytuł <input type="text" id="editTitle"></label>
+    <label class="form-label">Data zdjęcia <input type="date" id="editDate"></label>
+    <label class="form-label">Opis <textarea id="editDesc" rows="4"></textarea></label>
+    <label class="form-label">Humor
+      <select id="editMood">
+        <option value="">— wybierz —</option>
+        <option value="great">Świetny</option>
+        <option value="good">Dobry</option>
+        <option value="meh">Nic specjalnego</option>
+        <option value="bad">Zły</option>
+        <option value="awful">Okropny</option>
+      </select>
+    </label>
+    <div id="editHabits" class="habits-checkboxes"></div>
+    <div id="editMsg" class="form-msg" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn-submit" id="saveEdit">Zapisz</button>
+      <button class="btn-danger" id="deleteBtn">Usuń zdjęcie</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL galerii ══════════════════════════════════════════════════════════ -->
+<div id="galleryModal" class="modal" style="display:none">
+  <div class="modal-box modal-box--wide">
+    <button class="modal-close" id="gModalClose">✕</button>
+    <h3 class="modal-title" id="gModalTitle"></h3>
+    <div class="form-row">
+      <label class="form-label">Tytuł <input type="text" id="gEditTitle"></label>
+      <label class="form-label">Opis <input type="text" id="gEditDesc"></label>
+    </div>
+    <div id="gEditMsg" class="form-msg" style="display:none"></div>
+    <button class="btn-submit" id="gSaveBtn" style="margin-bottom:1.5rem">Zapisz zmiany</button>
+
+    <h4 class="admin-heading" style="font-size:.9rem;margin-bottom:.75rem">Zdjęcia w galerii</h4>
+    <div class="gallery-photo-grid" id="gCurrentPhotos"></div>
+
+    <h4 class="admin-heading" style="font-size:.9rem;margin:1.25rem 0 .75rem">Dodaj zdjęcia</h4>
+    <input type="text" id="gSearch" placeholder="Szukaj po tytule lub dniu…" style="margin-bottom:.75rem">
+    <div class="gallery-photo-grid" id="gAllPhotos"></div>
+
+    <div class="modal-actions" style="margin-top:1.5rem">
+      <button class="btn-danger" id="gDeleteGallery">Usuń galerię</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+const tabPanels = { photos: 'tabPhotos', galleries: 'tabGalleries', profile: 'tabProfile', menu: 'tabMenu', habits: 'tabHabits', seo: 'tabSeo', password: 'tabPassword' };
+document.querySelectorAll('.admin-tab').forEach(tab => {
+  tab.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    Object.entries(tabPanels).forEach(([key, id]) => {
+      document.getElementById(id).style.display = tab.dataset.tab === key ? '' : 'none';
+    });
+    if (tab.dataset.tab === 'galleries') loadGalleriesList();
+    if (tab.dataset.tab === 'profile') loadProfileForm();
+    if (tab.dataset.tab === 'menu') loadMenuList();
+    if (tab.dataset.tab === 'habits') loadHabitsList();
+    if (tab.dataset.tab === 'seo') loadSeoForm();
+  });
+});
+
+// ─── Admin hamburger ──────────────────────────────────────────────────────────
+(function() {
+  const ham     = document.getElementById('adminHamburger');
+  const overlay = document.getElementById('adminOverlay');
+  const close   = document.getElementById('adminOverlayClose');
+
+  const openMenu  = () => { overlay.classList.add('open'); ham.classList.add('open'); document.body.style.overflow = 'hidden'; };
+  const closeMenu = () => { overlay.classList.remove('open'); ham.classList.remove('open'); document.body.style.overflow = ''; };
+
+  ham.addEventListener('click', openMenu);
+  close.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeMenu(); });
+
+  // Zamknij overlay po wyborze zakładki
+  document.querySelectorAll('#adminOverlayLinks .admin-tab').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+})();
+
+// Synchronizacja active między desktop nav i overlay
+const _origTabHandler = document.querySelectorAll('.admin-tab');
+document.querySelectorAll('.admin-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#adminOverlayLinks .admin-tab, #adminNav .admin-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll(`.admin-tab[data-tab="${tab.dataset.tab}"]`).forEach(t => t.classList.add('active'));
+  });
+});
+
+// ─── Logout ───────────────────────────────────────────────────────────────────
+const doLogout = async () => {
+  await fetch('/new-day/logout', { method: 'POST' });
+  location.href = '/new-day/login';
+};
+document.getElementById('logoutBtn').addEventListener('click', doLogout);
+document.getElementById('overlayLogoutBtn').addEventListener('click', doLogout);
+
+// ─── Upload drop zone ─────────────────────────────────────────────────────────
+const dropZone  = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const preview   = document.getElementById('preview');
+const dropInner = document.getElementById('dropInner');
+
+document.getElementById('browseBtn').addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => showPreview(fileInput.files[0]));
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) { fileInput.files = e.dataTransfer.files; showPreview(f); }
+});
+function showPreview(file) {
+  if (!file) return;
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = 'block';
+  dropInner.style.display = 'none';
+}
+
+// ─── Upload form ──────────────────────────────────────────────────────────────
+document.getElementById('uploadForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('formMsg');
+  btn.disabled = true; btn.textContent = 'Zapisywanie…'; msg.style.display = 'none';
+  const fd = new FormData(e.target);
+  try {
+    const res = await fetch('/api/admin/photos', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Błąd serwera');
+    showMsg(msg, `✓ Dzień #${data.day} zapisany!`, 'success');
+    e.target.reset(); preview.style.display = 'none'; dropInner.style.display = '';
+    loadAdminGrid();
+  } catch(err) {
+    showMsg(msg, `✗ ${err.message}`, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Zapisz zdjęcie';
+  }
+});
+
+// ─── Admin photo grid ─────────────────────────────────────────────────────────
+let allPhotos = [];
+
+async function loadAdminGrid() {
+  const res = await fetch('/api/photos?per=999');
+  const data = await res.json();
+  allPhotos = data.photos;
+  const grid = document.getElementById('adminGrid');
+  grid.innerHTML = '';
+  allPhotos.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'admin-card';
+    div.innerHTML = `
+      <img src="/thumbnails/${p.thumb}" alt="${p.title}">
+      <div class="admin-card-info"><span class="day-num">#${p.day}</span><span>${p.title}</span></div>
+      <button class="btn-edit" data-id="${p.id}">Edytuj</button>`;
+    grid.appendChild(div);
+  });
+}
+
+document.getElementById('adminGrid').addEventListener('click', async e => {
+  const btn = e.target.closest('.btn-edit');
+  if (!btn) return;
+  const res = await fetch(`/api/photos/${btn.dataset.id}`);
+  const p = await res.json();
+  document.getElementById('editId').value = p.id;
+  document.getElementById('editTitle').value = p.title;
+  document.getElementById('editDesc').value = p.description || '';
+  document.getElementById('editMood').value = p.mood || '';
+  document.getElementById('editMsg').style.display = 'none';
+  document.getElementById('editModal').style.display = 'flex';
+});
+
+document.getElementById('deleteBtn').addEventListener('click', async () => {
+  if (!confirm('Na pewno usunąć to zdjęcie?')) return;
+  await fetch(`/api/admin/photos/${document.getElementById('editId').value}`, { method: 'DELETE' });
+  document.getElementById('editModal').style.display = 'none';
+  loadAdminGrid();
+});
+
+// ─── Gallery create form ───────────────────────────────────────────────────────
+document.getElementById('galleryForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('galleryMsg');
+  const res = await fetch('/api/admin/galleries', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      title: document.getElementById('galleryTitle').value,
+      description: document.getElementById('galleryDesc').value,
+    })
+  });
+  const data = await res.json();
+  if (res.ok) {
+    showMsg(msg, '✓ Galeria utworzona', 'success');
+    e.target.reset(); loadGalleriesList();
+  } else {
+    showMsg(msg, data.error, 'error');
+  }
+});
+
+// ─── Galleries list ────────────────────────────────────────────────────────────
+async function loadGalleriesList() {
+  const res = await fetch('/api/galleries');
+  const list = await res.json();
+  const el = document.getElementById('galleriesList');
+  if (!list.length) { el.innerHTML = '<p class="empty" style="display:block">Brak galerii.</p>'; return; }
+  el.innerHTML = '';
+  list.forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'gallery-list-item';
+    const thumb = g.cover_thumb
+      ? `<img src="/thumbnails/${g.cover_thumb}" class="gallery-list-thumb" alt="">`
+      : `<div class="gallery-list-thumb gallery-no-cover"></div>`;
+    div.innerHTML = `
+      ${thumb}
+      <div class="gallery-list-info">
+        <strong>${g.title}</strong>
+        <span>${g.photo_count} zdjęć</span>
+        ${g.description ? `<span class="gallery-list-desc">${g.description}</span>` : ''}
+      </div>
+      <button class="btn-edit" data-gid="${g.id}" data-title="${g.title}" data-desc="${g.description||''}">Zarządzaj</button>`;
+    el.appendChild(div);
+  });
+}
+
+// ─── Gallery modal ────────────────────────────────────────────────────────────
+let currentGalleryId = null;
+
+document.getElementById('galleriesList').addEventListener('click', async e => {
+  const btn = e.target.closest('.btn-edit');
+  if (!btn) return;
+  currentGalleryId = btn.dataset.gid;
+  document.getElementById('gModalTitle').textContent = btn.dataset.title;
+  document.getElementById('gEditTitle').value = btn.dataset.title;
+  document.getElementById('gEditDesc').value = btn.dataset.desc;
+  document.getElementById('gEditMsg').style.display = 'none';
+  document.getElementById('galleryModal').style.display = 'flex';
+  await loadGalleryModalPhotos();
+});
+
+document.getElementById('gModalClose').addEventListener('click', () => {
+  document.getElementById('galleryModal').style.display = 'none';
+});
+
+document.getElementById('gSaveBtn').addEventListener('click', async () => {
+  const msg = document.getElementById('gEditMsg');
+  const res = await fetch(`/api/admin/galleries/${currentGalleryId}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      title: document.getElementById('gEditTitle').value,
+      description: document.getElementById('gEditDesc').value,
+    })
+  });
+  if (res.ok) { showMsg(msg, '✓ Zapisano', 'success'); loadGalleriesList(); }
+  else { showMsg(msg, 'Błąd', 'error'); }
+});
+
+document.getElementById('gDeleteGallery').addEventListener('click', async () => {
+  if (!confirm('Na pewno usunąć tę galerię?')) return;
+  await fetch(`/api/admin/galleries/${currentGalleryId}`, { method: 'DELETE' });
+  document.getElementById('galleryModal').style.display = 'none';
+  loadGalleriesList();
+});
+
+async function loadGalleryModalPhotos() {
+  const res = await fetch(`/api/galleries/${currentGalleryId}`);
+  const g = await res.json();
+  const inGallery = new Set(g.photos.map(p => p.id));
+
+  // Current photos in gallery
+  const cur = document.getElementById('gCurrentPhotos');
+  cur.innerHTML = '';
+  if (!g.photos.length) {
+    cur.innerHTML = '<p style="color:var(--muted);font-size:.85rem">Brak zdjęć w galerii.</p>';
+  } else {
+    g.photos.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'gphoto-card';
+      div.innerHTML = `
+        <img src="/thumbnails/${p.thumb}" alt="${p.title}">
+        <div class="gphoto-label">#${p.day}</div>
+        <button class="gphoto-remove" data-pid="${p.id}" title="Usuń z galerii">✕</button>`;
+      cur.appendChild(div);
+    });
+  }
+
+  // All photos picker
+  renderAllPhotos(inGallery, '');
+
+  cur.addEventListener('click', async e => {
+    const btn = e.target.closest('.gphoto-remove');
+    if (!btn) return;
+    await fetch(`/api/admin/galleries/${currentGalleryId}/photos/${btn.dataset.pid}`, { method: 'DELETE' });
+    loadGalleryModalPhotos();
+  });
+}
+
+function renderAllPhotos(inGallery, filter) {
+  const container = document.getElementById('gAllPhotos');
+  container.innerHTML = '';
+  const filtered = filter
+    ? allPhotos.filter(p => p.title.toLowerCase().includes(filter) || String(p.day).includes(filter))
+    : allPhotos;
+  filtered.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'gphoto-card' + (inGallery.has(p.id) ? ' gphoto-in' : '');
+    div.innerHTML = `
+      <img src="/thumbnails/${p.thumb}" alt="${p.title}">
+      <div class="gphoto-label">#${p.day}</div>
+      ${inGallery.has(p.id) ? '<div class="gphoto-check">✓</div>' : `<button class="gphoto-add" data-pid="${p.id}">+</button>`}`;
+    container.appendChild(div);
+  });
+  container.querySelectorAll('.gphoto-add').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      await fetch(`/api/admin/galleries/${currentGalleryId}/photos`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ photo_id: parseInt(btn.dataset.pid) })
+      });
+      loadGalleryModalPhotos();
+    });
+  });
+}
+
+document.getElementById('gSearch').addEventListener('input', async e => {
+  const res = await fetch(`/api/galleries/${currentGalleryId}`);
+  const g = await res.json();
+  const inGallery = new Set(g.photos.map(p => p.id));
+  renderAllPhotos(inGallery, e.target.value.toLowerCase());
+});
+
+// ─── Utils ─────────────────────────────────────────────────────────────────────
+function showMsg(el, text, type) {
+  el.textContent = text; el.className = `form-msg form-msg--${type}`; el.style.display = 'block';
+}
+
+// ─── Profile form ─────────────────────────────────────────────────────────────
+async function loadProfileForm() {
+  const res = await fetch('/api/profile');
+  const p = await res.json();
+  document.getElementById('profileName').value = p.name || '';
+  document.getElementById('profileBio').value = p.bio || '';
+  document.getElementById('profileLocation').value = p.location || '';
+  document.getElementById('profileWebsite').value = p.website || '';
+  document.getElementById('profileFollowLabel').value = p.follow_label || '';
+  document.getElementById('profileFollowUrl').value = p.follow_url || '';
+  const ap = document.getElementById('avatarPreview');
+  if (p.avatar) {
+    ap.innerHTML = `<img src="/uploads/${p.avatar}?t=${Date.now()}" alt="avatar">`;
+  } else {
+    ap.innerHTML = `<div class="profile-avatar-placeholder">${(p.name||'?')[0].toUpperCase()}</div>`;
+  }
+}
+
+document.getElementById('profileForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('profileMsg');
+  const res = await fetch('/api/admin/profile', {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      name: document.getElementById('profileName').value,
+      bio: document.getElementById('profileBio').value,
+      location: document.getElementById('profileLocation').value,
+      website: document.getElementById('profileWebsite').value,
+      follow_label: document.getElementById('profileFollowLabel').value,
+      follow_url: document.getElementById('profileFollowUrl').value,
+    })
+  });
+  showMsg(msg, res.ok ? '✓ Profil zapisany' : '✗ Błąd zapisu', res.ok ? 'success' : 'error');
+});
+
+document.getElementById('avatarBtn').addEventListener('click', () => document.getElementById('avatarInput').click());
+document.getElementById('avatarInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const fd = new FormData();
+  fd.append('avatar', file);
+  const res = await fetch('/api/admin/profile/avatar', { method: 'POST', body: fd });
+  if (res.ok) loadProfileForm();
+});
+
+// ─── SEO form ──────────────────────────────────────────────────────────────────
+async function loadSeoForm() {
+  const res = await fetch('/api/settings');
+  const s = await res.json();
+  document.getElementById('seoTitle').value   = s.meta_title || '';
+  document.getElementById('seoDesc').value    = s.meta_description || '';
+  document.getElementById('seoOgImage').value = s.og_image_url ? s.og_image_url.replace('/uploads/','') : '';
+}
+
+document.getElementById('seoForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('seoMsg');
+  const res = await fetch('/api/admin/settings', {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      meta_title:       document.getElementById('seoTitle').value,
+      meta_description: document.getElementById('seoDesc').value,
+      og_image:         document.getElementById('seoOgImage').value,
+    })
+  });
+  showMsg(msg, res.ok ? '✓ Zapisano' : '✗ Błąd', res.ok ? 'success' : 'error');
+});
+
+// ─── Habits ────────────────────────────────────────────────────────────────────
+let allHabits = [];
+
+async function loadHabits() {
+  const res = await fetch('/api/habits');
+  allHabits = await res.json();
+  return allHabits;
+}
+
+async function renderHabitCheckboxes(containerId, photoHabits = []) {
+  if (!allHabits.length) await loadHabits();
+  const el = document.getElementById(containerId);
+  if (!allHabits.length) { el.innerHTML = '<p class="drop-hint">Brak nawyków. Dodaj je w zakładce Nawyki.</p>'; return; }
+  const doneSet = new Set(photoHabits.filter(h => h.done).map(h => h.id));
+  el.innerHTML = allHabits.map(h => `
+    <label class="habit-check-label">
+      <input type="checkbox" name="habit_${h.id}" value="1" ${doneSet.has(h.id) ? 'checked' : ''}>
+      <span>${h.name}</span>
+      ${h.description ? `<span class="drop-hint">${h.description}</span>` : ''}
+    </label>`).join('');
+}
+
+// Show habits checkboxes in upload form
+loadHabits().then(habits => {
+  if (habits.length) {
+    document.getElementById('habitsCheckboxes').style.display = '';
+    renderHabitCheckboxes('habitsCheckboxList');
+  }
+});
+
+// Habits in edit modal
+document.getElementById('modalClose').addEventListener('click', () => {
+  document.getElementById('editModal').style.display = 'none';
+});
+
+// Override original modal open to also load habits
+document.getElementById('adminGrid').addEventListener('click', async e => {
+  const btn = e.target.closest('.btn-edit');
+  if (!btn) return;
+  const res = await fetch(`/api/photos/${btn.dataset.id}`);
+  const p = await res.json();
+  document.getElementById('editId').value = p.id;
+  document.getElementById('editTitle').value = p.title;
+  document.getElementById('editDate').value = (p.shot_at || '').slice(0, 10);
+  document.getElementById('editDesc').value = p.description || '';
+  document.getElementById('editMood').value = p.mood || '';
+  document.getElementById('editMsg').style.display = 'none';
+  await renderHabitCheckboxes('editHabits', p.habits || []);
+  document.getElementById('editModal').style.display = 'flex';
+}, true); // use capture to run before existing listener
+
+// Override save to include habits
+document.getElementById('saveEdit').addEventListener('click', async () => {
+  const id = document.getElementById('editId').value;
+  const msg = document.getElementById('editMsg');
+  // Collect habit states
+  const habit_logs = {};
+  document.querySelectorAll('#editHabits input[type=checkbox]').forEach(cb => {
+    const hid = cb.name.replace('habit_', '');
+    habit_logs[hid] = cb.checked;
+  });
+  const res = await fetch(`/api/admin/photos/${id}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      title: document.getElementById('editTitle').value,
+      shot_at: document.getElementById('editDate').value || null,
+      description: document.getElementById('editDesc').value,
+      mood: document.getElementById('editMood').value,
+      habit_logs,
+    })
+  });
+  if (res.ok) { showMsg(msg, '✓ Zapisano', 'success'); loadAdminGrid(); }
+  else { const d = await res.json(); showMsg(msg, d.error, 'error'); }
+}, true);
+
+// ─── Menu tab ──────────────────────────────────────────────────────────────────
+document.getElementById('menuForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('menuMsg');
+  const res = await fetch('/api/admin/nav', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ title: document.getElementById('menuTitle').value, url: document.getElementById('menuUrl').value })
+  });
+  const data = await res.json();
+  if (res.ok) { showMsg(msg, '✓ Link dodany', 'success'); e.target.reset(); loadMenuList(); }
+  else { showMsg(msg, data.error, 'error'); }
+});
+
+async function loadMenuList() {
+  const res = await fetch('/api/nav');
+  const links = await res.json();
+  const el = document.getElementById('menuList');
+  if (!links.length) { el.innerHTML = '<p class="empty" style="display:block;padding:1rem 0">Brak linków.</p>'; return; }
+  el.innerHTML = links.map(l => `
+    <div class="habit-list-item">
+      <div class="habit-list-info">
+        <strong>${l.title}</strong>
+        <span class="drop-hint">${l.url}</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="number" value="${l.position}" min="0" max="99" style="width:52px;padding:4px 6px;font-size:.8rem"
+          onchange="updateNavPos(${l.id}, this.value)">
+        <button class="btn-danger" style="padding:5px 14px;font-size:.78rem" onclick="deleteNav(${l.id})">Usuń</button>
+      </div>
+    </div>`).join('');
+}
+
+async function updateNavPos(id, pos) {
+  await fetch(`/api/admin/nav/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ position: parseInt(pos) }) });
+  loadMenuList();
+}
+
+async function deleteNav(id) {
+  if (!confirm('Usunąć link z menu?')) return;
+  await fetch(`/api/admin/nav/${id}`, { method: 'DELETE' });
+  loadMenuList();
+}
+
+// ─── Habits tab ────────────────────────────────────────────────────────────────
+document.getElementById('habitForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('habitMsg');
+  const res = await fetch('/api/admin/habits', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ name: document.getElementById('habitName').value, description: document.getElementById('habitDesc').value })
+  });
+  const data = await res.json();
+  if (res.ok) { showMsg(msg, '✓ Nawyk dodany', 'success'); e.target.reset(); loadHabitsList(); loadHabits().then(() => renderHabitCheckboxes('habitsCheckboxList')); }
+  else { showMsg(msg, data.error, 'error'); }
+});
+
+async function loadHabitsList() {
+  await loadHabits();
+  const el = document.getElementById('habitsList');
+  if (!allHabits.length) { el.innerHTML = '<p class="empty" style="display:block;padding:1rem 0">Brak nawyków.</p>'; return; }
+  el.innerHTML = allHabits.map(h => `
+    <div class="habit-list-item">
+      <div class="habit-list-info">
+        <strong>${h.name}</strong>
+        ${h.description ? `<span class="drop-hint">${h.description}</span>` : ''}
+      </div>
+      <button class="btn-danger" style="padding:5px 14px;font-size:.78rem" onclick="deleteHabit(${h.id})">Usuń</button>
+    </div>`).join('');
+}
+
+async function deleteHabit(id) {
+  if (!confirm('Usunąć nawyk? Historia logów zostanie zachowana.')) return;
+  await fetch(`/api/admin/habits/${id}`, { method: 'DELETE' });
+  loadHabitsList();
+  loadHabits().then(() => renderHabitCheckboxes('habitsCheckboxList'));
+}
+
+// ─── Password form ─────────────────────────────────────────────────────────────
+document.getElementById('passwordForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg     = document.getElementById('pwMsg');
+  const current = document.getElementById('pwCurrent').value;
+  const newPw   = document.getElementById('pwNew').value;
+  const confirm = document.getElementById('pwConfirm').value;
+  if (newPw !== confirm) { showMsg(msg, '✗ Nowe hasła nie są identyczne', 'error'); return; }
+  const res = await fetch('/api/admin/password', {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ current, new: newPw })
+  });
+  const data = await res.json();
+  if (res.ok) {
+    showMsg(msg, '✓ Hasło zostało zmienione', 'success');
+    e.target.reset();
+  } else {
+    showMsg(msg, `✗ ${data.error}`, 'error');
+  }
+});
+
+// Default date = today
+document.getElementById('manualDate').value = new Date().toISOString().slice(0, 10);
+
+loadAdminGrid();
+</script>
+</body>
+</html>

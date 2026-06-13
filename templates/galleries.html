@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>{% include '_head.html' %}</head>
+<body>
+{% include '_header.html' %}
+<div class="profile-hero" id="profileHero"></div>
+<div class="page-tabs">
+  <a href="/" class="page-tab"><span id="tabPhotosCount">–</span> zdjęć</a>
+  <a href="/galerie" class="page-tab active"><span id="tabGalCount">–</span> galerii</a>
+  <a href="/nastroje" class="page-tab">Nastroje i nawyki</a>
+</div>
+<main>
+  <div class="galleries-grid" id="galleriesGrid"></div>
+  <p class="empty" id="empty" style="display:none">Brak galerii.</p>
+</main>
+<script src="/static/js/profile.js"></script>
+<script>
+function plural(n){return n===1?'zdjęcie':n>=2&&n<=4?'zdjęcia':'zdjęć';}
+async function load(){
+  const res=await fetch('/api/galleries'); const list=await res.json();
+  const grid=document.getElementById('galleriesGrid');
+  if(!list.length){document.getElementById('empty').style.display='block';return;}
+  list.forEach(g=>{
+    const a=document.createElement('a'); a.className='gallery-card'; a.href=`/galeria/${g.id}`;
+    const cover=g.cover_thumb?`<img src="/thumbnails/${g.cover_thumb}" alt="${g.title}" loading="lazy">`:`<div class="gallery-no-cover"></div>`;
+    a.innerHTML=`<div class="gallery-cover">${cover}</div><div class="gallery-info"><span class="gallery-title">${g.title}</span><span class="gallery-count">${g.photo_count} ${plural(g.photo_count)}</span></div>`;
+    grid.appendChild(a);
+  });
+}
+loadProfile('profileHero','tabPhotosCount','tabGalCount'); load();
+</script>
+</body>
+</html>

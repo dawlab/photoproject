@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>{% include '_head.html' %}</head>
+<body>
+{% include '_header.html' %}
+
+<div class="profile-hero" id="profileHero"></div>
+
+<div class="page-tabs">
+  <a href="/" class="page-tab active"><span id="tabPhotosCount">–</span> zdjęć</a>
+  <a href="/galerie" class="page-tab"><span id="tabGalCount">–</span> galerii</a>
+  <a href="/nastroje" class="page-tab">Nastroje i nawyki</a>
+</div>
+
+<main>
+  <div class="photo-feed" id="feed"></div>
+  <div class="load-more-wrap" id="loadWrap" style="display:none">
+    <button class="btn-load" id="loadBtn">Załaduj więcej</button>
+  </div>
+  <p class="empty" id="empty" style="display:none">Brak zdjęć.</p>
+</main>
+
+<script src="/static/js/profile.js"></script>
+<script src="/static/js/utils.js"></script>
+<script>
+let page = 1;
+const per = 30;
+
+async function loadPhotos() {
+  const res  = await fetch(`/api/photos?page=${page}&per=${per}`);
+  const data = await res.json();
+  const feed = document.getElementById('feed');
+  if (data.photos.length === 0 && page === 1) {
+    document.getElementById('empty').style.display = 'block'; return;
+  }
+  data.photos.forEach(p => {
+    const a = document.createElement('a');
+    a.className = 'feed-card';
+    a.href = `/photo/${p.id}`;
+    // desktop: flex-grow proportional to aspect ratio for justified rows
+    if (p.width && p.height) a.style.flexGrow = (p.width / p.height).toFixed(4);
+    const date = photoDate(p);
+    a.innerHTML = `
+      <div class="feed-card__img">
+        <img src="/thumbnails/${p.thumb}" alt="${p.title}" loading="lazy">
+      </div>
+      <div class="feed-card__meta">
+        <div class="card-meta-top">
+          <span class="day-num">Dzień ${p.day}</span>
+          ${date ? `<span class="card-date">${date}</span>` : ''}
+        </div>
+        <span class="card-title">${p.title}</span>
+      </div>`;
+    feed.appendChild(a);
+  });
+  page++;
+  document.getElementById('loadWrap').style.display = (page-1)*per < data.total ? 'flex' : 'none';
+}
+
+document.getElementById('loadBtn').addEventListener('click', loadPhotos);
+loadProfile('profileHero', 'tabPhotosCount', 'tabGalCount');
+loadPhotos();
+</script>
+</body>
+</html>

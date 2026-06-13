@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>{% include '_head.html' %}</head>
+<body>
+{% include '_header.html' %}
+<div class="profile-hero" id="profileHero"></div>
+<div class="page-tabs">
+  <a href="/" class="page-tab"><span id="tabPhotosCount">–</span> zdjęć</a>
+  <a href="/galerie" class="page-tab"><span id="tabGalCount">–</span> galerii</a>
+  <a href="/nastroje" class="page-tab active">Nastroje i nawyki</a>
+</div>
+
+<main class="moods-page">
+  <div class="moods-toolbar">
+    <div class="mood-legend" id="moodLegend"></div>
+    <div class="moods-filters">
+      <select id="viewSelect" class="year-select">
+        <option value="moods">Nastroje</option>
+      </select>
+      <select id="yearSelect" class="year-select"></select>
+    </div>
+  </div>
+  <div id="calendarWrap"></div>
+</main>
+
+<script src="/static/js/profile.js"></script>
+<script src="/static/js/moods.js"></script>
+<script>
+const MONTH_NAMES=['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+let currentYear = null;
+let currentView = 'moods'; // 'moods' or habit id
+
+// Populate view selector with habits
+async function initViewSelect() {
+  const res = await fetch('/api/habits');
+  const habits = await res.json();
+  const sel = document.getElementById('viewSelect');
+  habits.forEach(h => {
+    const opt = document.createElement('option');
+    opt.value = `habit_${h.id}`;
+    opt.textContent = h.name;
+    sel.appendChild(opt);
+  });
+}
+
+async function loadStats(year, view) {
+  let url = year ? `/api/stats?year=${year}` : '/api/stats';
+  if (view && view.startsWith('habit_')) {
+    const hid = view.replace('habit_', '');
+    url += (url.includes('?') ? '&' : '?') + `habit_id=${hid}`;
+  }
+  const data = await (await fetch(url)).json();
+
+  // Populate year selector once
+  const sel = document.getElementById('yearSelect');
+  if (!sel.options.length) {
+    (data.years || []).forEach(y => {
+      const o = document.createElement('option');
+      o.value = y; o.textContent = y;
+      if (String(y) === String(year)) o.selected = true;
+      sel.appendChild(o);
+    });
+    if (!year && data.years.length) {
+      currentYear = data.years[0];
+      sel.value = currentYear;
+    }
+  }
+
+  if (data.is_habit) {
+    renderHabitLegend(data.done_count, data.fail_count);
+    renderHabitCalendar(data.calendar, year || currentYear);
+  } else {
+    renderMoodLegend(data.moods);
+    renderMoodCalendar(data.calendar, year || currentYear);
+  }
+}
+
+// ─── Mood legend & calendar ────────────────────────────────────────────────────
+function renderMoodLegend(moods) {
+  document.getElementById('moodLegend').innerHTML = Object.entries(MOODS).map(([k,m]) => `
+    <div class="legend-item">${moodSvg(k,40)}<span class="legend-pct">${moods[k]??0}%</span></div>`).join('');
+}
+
+function renderMoodCalendar(entries, year) {
+  const map = {};
+  entries.forEach(e => { if (e.date) map[e.date] = {mood: e.mood, id: e.id}; });
+  renderGrid(year, (dateStr, dots) => {
+    const entry = map[dateStr];
+    const dot = document.createElement('div');
+    dot.className = 'cal-dot';
+    if (entry && MOODS[entry.mood]) {
+      dot.style.background = MOODS[entry.mood].color;
+      dot.title = `${dateStr} — ${MOODS[entry.mood].label}`;
+      dot.classList.add('cal-dot--filled');
+      dot.addEventListener('click', () => location.href = `/photo/${entry.id}`);
+    } else {
+      dot.classList.add('cal-dot--none');
+    }
+    dots.appendChild(dot);
+  });
+}
+
+// ─── Habit legend & calendar ───────────────────────────────────────────────────
+function renderHabitLegend(done, fail) {
+  document.getElementById('moodLegend').innerHTML = `
+    <div class="habit-stat habit-stat--done">
+      <span class="habit-stat-icon">✓</span>
+      <span class="habit-stat-num">${done}</span>
+      <span class="habit-stat-label">dni zrealizowano</span>
+    </div>
+    <div class="habit-stat habit-stat--fail">
+      <span class="habit-stat-icon">✗</span>
+      <span class="habit-stat-num">${fail}</span>
+      <span class="habit-stat-label">dni nie udało się</span>
+    </div>`;
+}
+
+function renderHabitCalendar(entries, year) {
+  const map = {};
+  entries.forEach(e => { if (e.date) map[e.date] = {done: e.done, id: e.id}; });
+  renderGrid(year, (dateStr, dots) => {
+    const entry = map[dateStr];
+    const dot = document.createElement('div');
+    dot.className = 'cal-dot';
+    if (entry !== undefined) {
+      dot.classList.add(entry.done ? 'cal-dot--habit-done' : 'cal-dot--habit-fail');
+      dot.title = `${dateStr} — ${entry.done ? 'Zrealizowano ✓' : 'Nie udało się ✗'}`;
+      dot.classList.add('cal-dot--filled');
+      dot.addEventListener('click', () => location.href = `/photo/${entry.id}`);
+    } else {
+      dot.classList.add('cal-dot--none');
+    }
+    dots.appendChild(dot);
+  });
+}
+
+// ─── Shared grid renderer ──────────────────────────────────────────────────────
+function renderGrid(year, buildDot) {
+  const wrap = document.getElementById('calendarWrap');
+  wrap.innerHTML = '';
+  if (!year) return;
+  const grid = document.createElement('div');
+  grid.className = 'cal-grid';
+  for (let m = 11; m >= 0; m--) {
+    const div = document.createElement('div'); div.className = 'cal-month';
+    div.innerHTML = `<div class="cal-month-name">${MONTH_NAMES[m].toUpperCase()}</div>`;
+    const dots = document.createElement('div'); dots.className = 'cal-dots';
+    const offset = (new Date(year, m, 1).getDay() + 6) % 7;
+    for (let i = 0; i < offset; i++) {
+      const b = document.createElement('div'); b.className = 'cal-dot cal-dot--empty'; dots.appendChild(b);
+    }
+    const days = new Date(year, m + 1, 0).getDate();
+    for (let d = 1; d <= days; d++) {
+      const dateStr = `${year}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      buildDot(dateStr, dots);
+    }
+    div.appendChild(dots);
+    grid.appendChild(div);
+  }
+  wrap.appendChild(grid);
+}
+
+// ─── Event listeners ───────────────────────────────────────────────────────────
+document.getElementById('yearSelect').addEventListener('change', e => {
+  currentYear = e.target.value;
+  loadStats(currentYear, currentView);
+});
+document.getElementById('viewSelect').addEventListener('change', e => {
+  currentView = e.target.value;
+  loadStats(currentYear, currentView);
+});
+
+// ─── Init ──────────────────────────────────────────────────────────────────────
+loadProfile('profileHero', 'tabPhotosCount', 'tabGalCount');
+initViewSelect();
+currentYear = new URLSearchParams(location.search).get('year') || null;
+loadStats(currentYear, 'moods');
+</script>
+</body>
+</html>

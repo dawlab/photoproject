@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>{% include '_head.html' %}</head>
+<body>
+<div class="login-wrap">
+  <a href="/" class="logo login-logo">365</a>
+  <h1 class="login-heading">Panel administracyjny</h1>
+  <form id="loginForm" class="login-form">
+    <label class="form-label">Hasło
+      <input type="password" id="passInput" autofocus placeholder="••••••••">
+    </label>
+    <div id="loginErr" class="form-msg form-msg--error" style="display:none"></div>
+    <button type="submit" class="btn-submit">Zaloguj się</button>
+  </form>
+</div>
+<script>
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = document.getElementById('loginErr');
+  err.style.display = 'none';
+  const res = await fetch('/new-day/login', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({password: document.getElementById('passInput').value})
+  });
+  if (res.ok) { location.href = '/new-day'; }
+  else { const d = await res.json(); err.textContent = d.error; err.style.display = 'block'; }
+});
+</script>
+</body>
+</html>

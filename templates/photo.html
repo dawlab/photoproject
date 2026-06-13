@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>{% include '_head.html' %}</head>
+<body>
+{% include '_header.html' %}
+<main class="photo-page" id="app"><div class="spinner"></div></main>
+<section class="memories-strip" id="memoriesStrip" style="display:none">
+  <div class="memories-inner" id="memoriesInner"></div>
+</section>
+
+<script src="/static/js/moods.js"></script>
+<script src="/static/js/utils.js"></script>
+<script>
+const id = location.pathname.split('/').pop();
+
+async function loadMemories() {
+  const res = await fetch(`/api/photos/${id}/memories`);
+  const list = await res.json();
+  if (!list.length) return;
+  const strip = document.getElementById('memoriesStrip');
+  const inner = document.getElementById('memoriesInner');
+  inner.innerHTML = list.map(m => `
+    <a href="/photo/${m.id}" class="memory-card">
+      <div class="memory-img">
+        <img src="/thumbnails/${m.thumb}" alt="${m.title}" loading="lazy">
+      </div>
+      <span class="memory-label">${m.label}</span>
+    </a>`).join('');
+  strip.style.display = '';
+}
+
+async function load() {
+  const res = await fetch(`/api/photos/${id}`);
+  if (!res.ok) { document.getElementById('app').innerHTML='<p class="error">Nie znaleziono zdjęcia.</p>'; return; }
+  const p = await res.json();
+  document.title = `${p.title} – 365`;
+
+  const shotDate = (p.shot_at || p.created_at)
+    ? new Date(p.shot_at || p.created_at).toLocaleDateString('pl-PL',{year:'numeric',month:'long',day:'numeric'})
+    : null;
+
+  const exifRows = [
+    p.exif_make || p.exif_model ? ['Aparat', [p.exif_make, p.exif_model].filter(Boolean).join(' ')] : null,
+    p.exif_lens     ? ['Obiektyw', p.exif_lens]    : null,
+    p.exif_focal    ? ['Ogniskowa', p.exif_focal]  : null,
+    p.exif_aperture ? ['Przysłona', p.exif_aperture] : null,
+    p.exif_shutter  ? ['Czas', p.exif_shutter]     : null,
+    p.exif_iso      ? ['ISO', p.exif_iso]           : null,
+  ].filter(Boolean);
+
+  const moodHtml = p.mood && MOODS[p.mood]
+    ? `<div class="mood-pill">${moodSvg(p.mood,22)}<span>${MOODS[p.mood].label}</span></div>` : '';
+
+  const imgSrc = p.display ? `/uploads/${p.display}` : `/uploads/${p.filename}`;
+
+  document.getElementById('app').innerHTML = `
+    <div class="photo-nav">
+      <a href="/" class="back-link">← Wszystkie zdjęcia</a>
+      <span class="day-badge">Dzień ${p.day}</span>
+    </div>
+    <div class="photo-layout">
+      <div class="photo-img-wrap">
+        <img src="${imgSrc}" alt="${p.title}" class="photo-full">
+      </div>
+      <aside class="photo-sidebar">
+        <h1 class="photo-title">${p.title}</h1>
+        ${shotDate ? `<p class="photo-date">${shotDate}</p>` : ''}
+        ${p.description ? `<p class="photo-desc">${p.description}</p>` : ''}
+        ${moodHtml}
+        ${p.habits && p.habits.length ? `
+        <div class="habits-block">
+          <h3 class="exif-heading">Nawyki</h3>
+          <ul class="habits-list">
+            ${p.habits.map(h => `<li class="habit-item ${h.done ? 'habit-done' : h.done===null ? 'habit-unset' : 'habit-fail'}">
+              <span class="habit-icon">${h.done ? '✓' : h.done===null ? '–' : '✗'}</span>
+              <span>${h.name}</span></li>`).join('')}
+          </ul>
+        </div>` : ''}
+        ${exifRows.length ? `
+        <div class="exif-block">
+          <h3 class="exif-heading">EXIF</h3>
+          <dl class="exif-list">
+            ${exifRows.map(([k,v]) => `<div class="exif-row"><dt>${k}</dt><dd>${v}</dd></div>`).join('')}
+          </dl>
+        </div>` : ''}
+      </aside>
+    </div>`;
+}
+load();
+loadMemories();
+</script>
+</body>
+</html>

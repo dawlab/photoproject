@@ -1,0 +1,52 @@
+<header class="site-header">
+  <a href="/" class="logo">365</a>
+  <nav class="site-nav" id="siteNav">
+    <!-- populated by JS from /api/nav -->
+  </nav>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="nav-overlay" id="navOverlay">
+  <button class="nav-overlay__close" id="navClose" aria-label="Zamknij">✕</button>
+  <nav class="nav-overlay__links" id="navOverlayLinks"></nav>
+</div>
+
+<script>
+(async () => {
+  const res  = await fetch('/api/nav');
+  const links = await res.json();
+  const cur  = location.pathname;
+
+  // Desktop nav
+  const nav = document.getElementById('siteNav');
+  nav.innerHTML = links.map(l =>
+    `<a href="${l.url}" class="nav-link${cur===l.url||cur.startsWith(l.url+'/')&&l.url!=='/'?' active':''}">${l.title}</a>`
+  ).join('');
+
+  // Mobile overlay nav
+  const overlay = document.getElementById('navOverlayLinks');
+  overlay.innerHTML = links.map(l =>
+    `<a href="${l.url}" class="nav-overlay__link${cur===l.url?' active':''}">${l.title}</a>`
+  ).join('');
+
+  // Hamburger toggle
+  const ham  = document.getElementById('hamburger');
+  const box  = document.getElementById('navOverlay');
+  const close = document.getElementById('navClose');
+
+  ham.addEventListener('click', () => {
+    box.classList.add('open');
+    ham.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+  const closeMenu = () => {
+    box.classList.remove('open');
+    ham.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  close.addEventListener('click', closeMenu);
+  box.addEventListener('click', e => { if (e.target === box) closeMenu(); });
+})();
+</script>

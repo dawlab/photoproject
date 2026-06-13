@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>{% include '_head.html' %}</head>
+<body>
+{% include '_header.html' %}
+<main id="app"><div class="spinner"></div></main>
+<script src="/static/js/utils.js"></script>
+<script>
+const gid = location.pathname.split('/').pop();
+async function load() {
+  const res = await fetch(`/api/galleries/${gid}`);
+  if (!res.ok) { document.getElementById('app').innerHTML='<p class="error">Nie znaleziono galerii.</p>'; return; }
+  const g = await res.json();
+  document.title = `${g.title} – 365`;
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="gallery-header">
+      <a href="/galerie" class="back-link">← Wszystkie galerie</a>
+      <h1 class="gallery-page-title">${g.title}</h1>
+      ${g.description ? `<p class="gallery-desc">${g.description}</p>` : ''}
+      <p class="gallery-meta">${g.photos.length} ${plural(g.photos.length)}</p>
+    </div>
+    <div class="photo-feed" id="feed"></div>`;
+  const feed = document.getElementById('feed');
+  g.photos.forEach(p => {
+    const a = document.createElement('a');
+    a.className = 'feed-card'; a.href = `/photo/${p.id}`;
+    if (p.width && p.height) a.style.flexGrow = (p.width / p.height).toFixed(4);
+    const date = photoDate(p);
+    a.innerHTML = `
+      <div class="feed-card__img"><img src="/thumbnails/${p.thumb}" alt="${p.title}" loading="lazy"></div>
+      <div class="feed-card__meta">
+        <div class="card-meta-top">
+          <span class="day-num">Dzień ${p.day}</span>
+          ${date ? `<span class="card-date">${date}</span>` : ''}
+        </div>
+        <span class="card-title">${p.title}</span>
+      </div>`;
+    feed.appendChild(a);
+  });
+}
+function plural(n) { return n===1?'zdjęcie':n>=2&&n<=4?'zdjęcia':'zdjęć'; }
+load();
+</script>
+</body>
+</html>
