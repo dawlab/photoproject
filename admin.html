@@ -199,6 +199,15 @@
       </select>
     </label>
     <div id="editHabits" class="habits-checkboxes"></div>
+    <div class="form-label" style="margin-top:1rem;font-weight:600">Zamień zdjęcie (opcjonalnie)</div>
+    <div class="drop-zone" id="editDropZone" style="margin-top:.5rem">
+      <input type="file" id="editFileInput" accept="image/*" hidden>
+      <div class="drop-inner" id="editDropInner">
+        <p style="margin:0">Przeciągnij lub <button type="button" id="editBrowseBtn">wybierz nowy plik</button></p>
+        <p class="drop-hint">Zastąpi obecne zdjęcie i miniaturkę</p>
+      </div>
+      <img id="editPreview" class="drop-preview" style="display:none" alt="podgląd">
+    </div>
     <div id="editMsg" class="form-msg" style="display:none"></div>
     <div class="modal-actions">
       <button class="btn-submit" id="saveEdit">Zapisz</button>
@@ -460,26 +469,104 @@ async function openEditModal(id) {
   document.getElementById('editModal').style.display = 'flex';
 }
 
-document.getElementById('modalClose').addEventListener('click', () => document.getElementById('editModal').style.display = 'none');
+document.getElementById('modalClose').addEventListener('click', () => {
+  document.getElementById('editModal').style.display = 'none';
+  document.getElementById('editFileInput').value = '';
+  document.getElementById('editPreview').style.display = 'none';
+  document.getElementById('editDropInner').style.display = '';
+});
+
+// Edit drop zone
+document.getElementById('editBrowseBtn').addEventListener('click', () => document.getElementById('editFileInput').click());
+document.getElementById('editFileInput').addEventListener('change', () => showEditPreview(document.getElementById('editFileInput').files[0]));
+document.getElementById('editDropZone').addEventListener('dragover', e => { e.preventDefault(); document.getElementById('editDropZone').classList.add('drag-over'); });
+document.getElementById('editDropZone').addEventListener('dragleave', () => document.getElementById('editDropZone').classList.remove('drag-over'));
+document.getElementById('editDropZone').addEventListener('drop', e => {
+  e.preventDefault(); document.getElementById('editDropZone').classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) { const dt = new DataTransfer(); dt.items.add(f); document.getElementById('editFileInput').files = dt.files; showEditPreview(f); }
+});
+function showEditPreview(file) {
+  if (!file) return;
+  document.getElementById('editPreview').src = URL.createObjectURL(file);
+  document.getElementById('editPreview').style.display = 'block';
+  document.getElementById('editDropInner').style.display = 'none';
+}
 
 document.getElementById('saveEdit').addEventListener('click', async () => {
   const id  = parseInt(document.getElementById('editId').value);
   const msg = document.getElementById('editMsg');
-  const updates = {
-    title:       document.getElementById('editTitle').value.trim(),
-    description: document.getElementById('editDesc').value,
-    mood:        document.getElementById('editMood').value,
-    shot_at:     document.getElementById('editDate').value || null,
-  };
-  if (updates.shot_at) updates.shot_at += 'T00:00:00';
-  const { error } = await sb.from('photos').update(updates).eq('id', id);
-  if (error) { showMsg(msg, '✗ ' + error.message); return; }
+  const btn = document.getElementById('saveEdit');
+  btn.disabled = true; btn.textContent = 'Zapisywanie…';
+  msg.style.display = 'none';
 
-  for (const cb of document.querySelectorAll('#editHabits input[type=checkbox]')) {
-    await sb.from('habit_logs').upsert({ habit_id: parseInt(cb.dataset.habit), photo_id: id, done: cb.checked });
+  try {
+    const updates = {
+      title:       document.getElementById('editTitle').value.trim(),
+      description: document.getElementById('editDesc').value,
+      mood:        document.getElementById('editMood').value,
+      shot_at:     document.getElementById('editDate').value || null,
+    };
+    if (updates.shot_at) updates.shot_at += 'T00:00:00';
+
+    const newFile = document.getElementById('editFileInput').files[0];
+    if (newFile) {
+      const p = allPhotos.find(x => x.id === id);
+      const ext      = newFile.name.split('.').pop().toLowerCase();
+      const base     = `day${pad(p.day)}`;
+      const origName = `${base}.${ext}`;
+      const thumbName= `${base}_thumb.webp`;
+      const dispName = `${base}_display.webp`;
+
+      btn.textContent = 'Odczyt EXIF…';
+      const exifData = await extractExif(newFile);
+      if (!exifData.shot_at && updates.shot_at) exifData.shot_at = updates.shot_at;
+      const { width, height } = await getImageSize(newFile);
+
+      btn.textContent = 'Generowanie miniatur…';
+      const [thumbBlob, dispBlob] = await Promise.all([
+        resizeImage(newFile, 800, 0.85),
+        resizeImage(newFile, 1920, 0.85),
+      ]);
+
+      btn.textContent = 'Wysyłanie plików…';
+      const uploads = await Promise.all([
+        sb.storage.from('photos').upload(origName,  newFile,   { upsert: true }),
+        sb.storage.from('thumbnails').upload(thumbName, thumbBlob, { upsert: true, contentType: 'image/webp' }),
+        sb.storage.from('photos').upload(dispName,  dispBlob,  { upsert: true, contentType: 'image/webp' }),
+      ]);
+      for (const { error } of uploads) {
+        if (error) throw new Error('Błąd uploadu: ' + error.message);
+      }
+
+      // Remove old files if filenames changed
+      if (p.filename !== origName) await sb.storage.from('photos').remove([p.filename]);
+      if (p.display  !== dispName) await sb.storage.from('photos').remove([p.display].filter(Boolean));
+      if (p.thumb    !== thumbName) await sb.storage.from('thumbnails').remove([p.thumb]);
+
+      Object.assign(updates, { filename: origName, thumb: thumbName, display: dispName, width, height, ...exifData });
+    }
+
+    btn.textContent = 'Zapisywanie…';
+    const { error } = await sb.from('photos').update(updates).eq('id', id);
+    if (error) throw new Error(error.message);
+
+    for (const cb of document.querySelectorAll('#editHabits input[type=checkbox]')) {
+      await sb.from('habit_logs').upsert({ habit_id: parseInt(cb.dataset.habit), photo_id: id, done: cb.checked });
+    }
+
+    // Reset file input
+    document.getElementById('editFileInput').value = '';
+    document.getElementById('editPreview').style.display = 'none';
+    document.getElementById('editDropInner').style.display = '';
+
+    showMsg(msg, '✓ Zapisano', 'success');
+    loadAdminGrid();
+  } catch (err) {
+    showMsg(msg, '✗ ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Zapisz';
   }
-  showMsg(msg, '✓ Zapisano', 'success');
-  loadAdminGrid();
 });
 
 document.getElementById('deleteBtn').addEventListener('click', async () => {
