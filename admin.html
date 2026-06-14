@@ -376,8 +376,8 @@ document.getElementById('uploadForm').addEventListener('submit', async e => {
 
     btn.textContent = 'Generowanie miniatur…';
     const [thumbBlob, dispBlob] = await Promise.all([
-      resizeImage(file, 500, 0.72),
-      resizeImage(file, 1920, 0.82),
+      resizeImage(file, 800, 0.85),
+      resizeImage(file, 1920, 0.85),
     ]);
 
     btn.textContent = 'Wysyłanie plików…';
