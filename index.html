@@ -56,7 +56,7 @@ async function loadPhotos() {
     const date = photoDate(p);
     a.innerHTML = `
       <div class="feed-card__img">
-        <img src="${thumbUrl(p.thumb)}" alt="${p.title}" loading="lazy">
+        <img src="${thumbUrl(p.thumb)}" alt="${p.title}" loading="lazy" onload="this.parentElement.style.animation='none'">
       </div>
       <div class="feed-card__meta">
         <div class="card-meta-top">

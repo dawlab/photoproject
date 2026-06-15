@@ -13,19 +13,47 @@ function thumbUrl(filename) {
   return sb.storage.from('thumbnails').getPublicUrl(filename).data.publicUrl;
 }
 
-// Resize image client-side, respecting EXIF orientation, returns a Blob (webp)
+// Resize image client-side, respecting EXIF orientation, returns a Blob (webp).
+// Uses multi-step halving for sharp results (avoids single-step blurriness).
 async function resizeImage(file, maxSide, quality = 0.82) {
   const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
-  let { width, height } = bitmap;
-  if (width > maxSide || height > maxSide) {
-    if (width >= height) { height = Math.round(height * maxSide / width); width = maxSide; }
-    else { width = Math.round(width * maxSide / height); height = maxSide; }
+  let srcW = bitmap.width, srcH = bitmap.height;
+
+  let targetW = srcW, targetH = srcH;
+  if (targetW > maxSide || targetH > maxSide) {
+    if (targetW >= targetH) { targetH = Math.round(targetH * maxSide / targetW); targetW = maxSide; }
+    else { targetW = Math.round(targetW * maxSide / targetH); targetH = maxSide; }
   }
-  const canvas = document.createElement('canvas');
-  canvas.width = width; canvas.height = height;
-  canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
+
+  // Draw original into canvas
+  let canvas = document.createElement('canvas');
+  canvas.width = srcW; canvas.height = srcH;
+  canvas.getContext('2d').drawImage(bitmap, 0, 0);
   bitmap.close();
-  return new Promise(resolve => canvas.toBlob(resolve, 'image/webp', quality));
+
+  // Halve dimensions step by step until we're within 2x of target
+  let curW = srcW, curH = srcH;
+  while (curW > targetW * 2 || curH > targetH * 2) {
+    const nextW = Math.max(Math.ceil(curW / 2), targetW);
+    const nextH = Math.max(Math.ceil(curH / 2), targetH);
+    const tmp = document.createElement('canvas');
+    tmp.width = nextW; tmp.height = nextH;
+    const ctx = tmp.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(canvas, 0, 0, nextW, nextH);
+    canvas = tmp; curW = nextW; curH = nextH;
+  }
+
+  // Final step with high quality
+  const final = document.createElement('canvas');
+  final.width = targetW; final.height = targetH;
+  const ctx = final.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(canvas, 0, 0, targetW, targetH);
+
+  return new Promise(resolve => final.toBlob(resolve, 'image/webp', quality));
 }
 
 // Get image dimensions respecting EXIF orientation
