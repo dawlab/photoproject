@@ -232,12 +232,10 @@ main { max-width: 1600px; margin: 0 auto; padding: 1.5rem; }
     transition: opacity 0.18s;
   }
 
-  /* Invisible spacers pushed after real cards stop orphan cards stretching */
+  /* Invisible spacers absorb remaining row space so orphan cards stay small */
   .feed-fill {
-    flex-grow: 1;
+    flex-grow: 9999;
     flex-basis: 200px;
-    min-width: 140px;
-    max-width: 680px;
     height: 0;
     overflow: hidden;
     pointer-events: none;
@@ -593,8 +591,15 @@ textarea { resize: vertical; min-height: 90px; }
   display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px;
   margin-bottom: .5rem;
 }
-.gphoto-card { position: relative; border-radius: 4px; overflow: hidden; aspect-ratio: 1; background: #eee; }
-.gphoto-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gphoto-card {
+  position: relative; border-radius: 4px; overflow: hidden; background: #eee;
+  /* Padding-top trick: reliable cross-browser square regardless of aspect-ratio support */
+  padding-top: 100%; height: 0;
+}
+.gphoto-card img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.gphoto-label, .gphoto-add, .gphoto-remove, .gphoto-check { position: absolute; }
 .gphoto-card.gphoto-in { opacity: .45; }
 .gphoto-label {
   position: absolute; bottom: 0; left: 0; right: 0;

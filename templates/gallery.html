@@ -38,6 +38,13 @@ async function load() {
       </div>`;
     feed.appendChild(a);
   });
+
+  // Spacers: absorb leftover space so orphan cards don't stretch
+  for (let i = 0; i < 4; i++) {
+    const s = document.createElement('div');
+    s.className = 'feed-fill';
+    feed.appendChild(s);
+  }
 }
 function plural(n) { return n===1?'zdjęcie':n>=2&&n<=4?'zdjęcia':'zdjęć'; }
 load();
