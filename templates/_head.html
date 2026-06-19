@@ -1,10 +1,58 @@
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ meta_title }}</title>
 <meta name="description" content="{{ meta_description }}">
 <meta property="og:title" content="{{ meta_title }}">
 <meta property="og:description" content="{{ meta_description }}">
 {% if og_image_url %}<meta property="og:image" content="{{ og_image_url }}">{% endif %}
 <meta property="og:type" content="website">
+
+<!-- PWA manifest -->
+{% if request.path.startswith('/new-day') %}
+<link rel="manifest" href="/static/manifest-admin.json">
+{% else %}
+<link rel="manifest" href="/static/manifest.json">
+{% endif %}
+<meta name="theme-color" content="#1a1a18">
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="{% if request.path.startswith('/new-day') %}P365 Admin{% else %}Photo365{% endif %}">
+<link rel="apple-touch-icon" href="/static/icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/static/icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="/static/icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-180.png">
+
+<!-- iOS Splash Screens -->
+<!-- iPhone 16 Pro Max (430×956) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:440px) and (device-height:956px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/static/icons/splash-1320x2868.png">
+<!-- iPhone 16 Pro (402×874) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:402px) and (device-height:874px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/static/icons/splash-1206x2622.png">
+<!-- iPhone 15 Pro Max / 15 Plus / 14 Pro Max (430×932) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/static/icons/splash-1290x2796.png">
+<!-- iPhone 15 / 15 Pro / 14 Pro (393×852) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:393px) and (device-height:852px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/static/icons/splash-1179x2556.png">
+<!-- iPhone 14 / 13 / 12 (390×844) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/static/icons/splash-1170x2532.png">
+<!-- iPhone 13 mini / 12 mini (375×812) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/static/icons/splash-1125x2436.png">
+<!-- iPhone SE 3rd gen / 8 / 7 / 6s (375×667) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/static/icons/splash-750x1334.png">
+<!-- iPad Pro 12.9" (1024×1366) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:1024px) and (device-height:1366px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/static/icons/splash-2048x2732.png">
+<!-- iPad Pro 11" / Air 10.9" (834×1194) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:834px) and (device-height:1194px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/static/icons/splash-1668x2388.png">
+<!-- iPad 10.2" / mini (768×1024) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/static/icons/splash-1536x2048.png">
+
 <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
 <link rel="stylesheet" href="/static/css/main.css">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .catch(() => {});
+    });
+  }
+</script>

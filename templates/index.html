@@ -53,6 +53,15 @@ async function loadPhotos() {
       </div>`;
     feed.appendChild(a);
   });
+
+  // Remove old spacers, add fresh ones so last row doesn't stretch
+  feed.querySelectorAll('.feed-fill').forEach(el => el.remove());
+  for (let i = 0; i < 4; i++) {
+    const s = document.createElement('div');
+    s.className = 'feed-fill';
+    feed.appendChild(s);
+  }
+
   page++;
   document.getElementById('loadWrap').style.display = (page-1)*per < data.total ? 'flex' : 'none';
 }

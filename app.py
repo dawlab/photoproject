@@ -4,7 +4,7 @@ import hashlib
 import secrets
 from datetime import datetime
 from functools import wraps
-from flask import Flask, request, jsonify, send_from_directory, abort, session, redirect, render_template
+from flask import Flask, request, jsonify, send_from_directory, abort, session, redirect, render_template, Response
 from PIL import Image, ExifTags
 
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
@@ -202,6 +202,16 @@ def get_site_settings():
         'meta_description': s.get('meta_description', ''),
         'og_image_url':     f"/uploads/{s['og_image']}" if s.get('og_image') else '',
     }
+
+# ─── PWA ───────────────────────────────────────────────────────────────────────
+
+@app.route('/sw.js')
+def service_worker():
+    resp = send_from_directory(os.path.join(BASE_DIR, 'static'), 'sw.js',
+                               mimetype='application/javascript')
+    resp.headers['Service-Worker-Allowed'] = '/'
+    resp.headers['Cache-Control'] = 'no-cache'
+    return resp
 
 # ─── Static files ──────────────────────────────────────────────────────────────
 

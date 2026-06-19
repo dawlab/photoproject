@@ -1,0 +1,22 @@
+{
+  "name": "Photo 365 – Admin",
+  "short_name": "P365 Admin",
+  "description": "Panel administracyjny Photo 365",
+  "start_url": "/new-day",
+  "scope": "/new-day",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1a1a18",
+  "theme_color": "#1a1a18",
+  "lang": "pl",
+  "icons": [
+    { "src": "/static/icons/icon-72.png",  "sizes": "72x72",   "type": "image/png" },
+    { "src": "/static/icons/icon-96.png",  "sizes": "96x96",   "type": "image/png" },
+    { "src": "/static/icons/icon-128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "/static/icons/icon-144.png", "sizes": "144x144", "type": "image/png" },
+    { "src": "/static/icons/icon-152.png", "sizes": "152x152", "type": "image/png" },
+    { "src": "/static/icons/icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

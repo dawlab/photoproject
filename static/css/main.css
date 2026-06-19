@@ -13,7 +13,11 @@
 }
 
 html { font-size: 16px; }
-body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; }
+body {
+  background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh;
+  /* iOS safe area: padding for home indicator */
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
 a { color: inherit; text-decoration: none; }
 
@@ -24,6 +28,9 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 2rem; height: 56px;
+  /* iOS standalone: push header below status bar */
+  padding-top: env(safe-area-inset-top);
+  height: calc(56px + env(safe-area-inset-top));
 }
 .logo { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.03em; }
 /* ─── Hamburger ──────────────────────────────────────────────────────────────── */
@@ -223,6 +230,17 @@ main { max-width: 1600px; margin: 0 auto; padding: 1.5rem; }
     border-radius: var(--radius);
     overflow: hidden;
     transition: opacity 0.18s;
+  }
+
+  /* Invisible spacers pushed after real cards stop orphan cards stretching */
+  .feed-fill {
+    flex-grow: 1;
+    flex-basis: 200px;
+    min-width: 140px;
+    max-width: 680px;
+    height: 0;
+    overflow: hidden;
+    pointer-events: none;
   }
   .feed-card:hover { opacity: .88; }
 
@@ -612,3 +630,28 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .modal-title { font-size: 1.1rem; font-weight: 700; }
 .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ─── PWA / iOS Standalone ───────────────────────────────────────────────────── */
+@media (display-mode: standalone) {
+  /* Side paddings respect notch on landscape */
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Header already gets padding-top via safe-area-inset-top above;
+     ensure left/right also respect notch in landscape */
+  .site-header {
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+  }
+
+  /* Nav overlay full-height should account for bottom bar */
+  .nav-overlay__links {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+
+  /* Tap targets slightly larger for touch-first use */
+  .nav-overlay__link { padding: 1.1rem 1.75rem; }
+  .hamburger { width: 44px; height: 44px; }
+}
