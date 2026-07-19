@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin – 365</title>
+<title>Admin – Projekt Lepiej</title>
 <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
 <link rel="stylesheet" href="static/css/main.css">
 </head>
 <body>
 
 <header class="site-header">
-  <a href="index.html" class="logo">365</a>
+  <a href="index.html" class="logo">Projekt Lepiej</a>
   <nav class="site-nav" id="adminNav">
     <a href="#photos"    class="nav-link admin-tab active" data-tab="photos">Zdjęcia</a>
     <a href="#galleries" class="nav-link admin-tab" data-tab="galleries">Galerie</a>
-    <a href="#profile"   class="nav-link admin-tab" data-tab="profile">Profil</a>
+    <a href="#newsletter" class="nav-link admin-tab" data-tab="newsletter">Newsletter</a>
     <a href="#menu"      class="nav-link admin-tab" data-tab="menu">Menu</a>
     <a href="#habits"    class="nav-link admin-tab" data-tab="habits">Nawyki</a>
-    <a href="#seo"       class="nav-link admin-tab" data-tab="seo">SEO</a>
+    <a href="#seo"       class="nav-link admin-tab" data-tab="seo">Ustawienia</a>
     <a href="#password"  class="nav-link admin-tab" data-tab="password">Hasło</a>
   </nav>
   <div class="admin-header-right">
@@ -31,10 +31,10 @@
   <nav class="nav-overlay__links" id="adminOverlayLinks">
     <a href="#photos"    class="nav-overlay__link admin-tab active" data-tab="photos">Zdjęcia</a>
     <a href="#galleries" class="nav-overlay__link admin-tab" data-tab="galleries">Galerie</a>
-    <a href="#profile"   class="nav-overlay__link admin-tab" data-tab="profile">Profil</a>
+    <a href="#newsletter" class="nav-overlay__link admin-tab" data-tab="newsletter">Newsletter</a>
     <a href="#menu"      class="nav-overlay__link admin-tab" data-tab="menu">Menu</a>
     <a href="#habits"    class="nav-overlay__link admin-tab" data-tab="habits">Nawyki</a>
-    <a href="#seo"       class="nav-overlay__link admin-tab" data-tab="seo">SEO</a>
+    <a href="#seo"       class="nav-overlay__link admin-tab" data-tab="seo">Ustawienia</a>
     <a href="#password"  class="nav-overlay__link admin-tab" data-tab="password">Hasło</a>
     <div style="border-top:1px solid var(--border);margin:1rem 1.75rem"></div>
     <button class="nav-overlay__link" id="overlayLogoutBtn" style="background:none;border:none;cursor:pointer;text-align:left;color:var(--muted);font-size:1.1rem;font-weight:500">Wyloguj</button>
@@ -96,31 +96,14 @@
   <div id="galleriesList"></div>
 </main>
 
-<!-- ═══ PROFIL ═════════════════════════════════════════════════════════════════ -->
-<main class="admin-page" id="tabProfile" style="display:none">
-  <h2 class="admin-heading">Edytuj profil</h2>
-  <div class="profile-avatar-section">
-    <div id="avatarPreview" class="profile-avatar-admin"></div>
-    <div>
-      <input type="file" id="avatarInput" accept="image/*" hidden>
-      <button class="btn-submit" type="button" id="avatarBtn">Zmień avatar</button>
-      <p class="drop-hint" style="margin-top:6px">JPG, PNG, WEBP · zalecane 300×300 px</p>
-    </div>
+<!-- ═══ NEWSLETTER ═════════════════════════════════════════════════════════════ -->
+<main class="admin-page" id="tabNewsletter" style="display:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:1.5rem">
+    <h2 class="admin-heading" style="margin-bottom:0">Subskrybenci newslettera</h2>
+    <button class="btn-submit" type="button" id="nlExportBtn">Eksportuj CSV</button>
   </div>
-  <form id="profileForm" class="upload-form" style="margin-top:1.5rem">
-    <label class="form-label">Imię / nazwa wyświetlana<input type="text" id="profileName" placeholder="np. Jan Kowalski"></label>
-    <label class="form-label">Bio<textarea id="profileBio" rows="3" placeholder="Kilka słów o sobie…"></textarea></label>
-    <div class="form-row">
-      <label>Lokalizacja<input type="text" id="profileLocation" placeholder="np. Warszawa, Polska"></label>
-      <label>Strona www<input type="url" id="profileWebsite" placeholder="https://…"></label>
-    </div>
-    <div class="form-row">
-      <label>Tekst przycisku „Obserwuj"<input type="text" id="profileFollowLabel" placeholder="np. Obserwuj"></label>
-      <label>URL przycisku „Obserwuj"<input type="url" id="profileFollowUrl" placeholder="https://…"></label>
-    </div>
-    <div id="profileMsg" class="form-msg" style="display:none"></div>
-    <button type="submit" class="btn-submit">Zapisz profil</button>
-  </form>
+  <p class="drop-hint" id="nlCount" style="margin-bottom:1rem"></p>
+  <div id="newsletterList"></div>
 </main>
 
 <!-- ═══ MENU ══════════════════════════════════════════════════════════════════ -->
@@ -163,8 +146,16 @@
       <input type="text" id="seoOgImage" placeholder="np. avatar.webp">
       <span class="drop-hint">Wpisz nazwę pliku który już wgrałeś</span>
     </label>
+
+    <hr class="divider" style="margin:1rem 0">
+    <h2 class="admin-heading" style="margin-bottom:.25rem">Social media</h2>
+    <p class="drop-hint" style="margin-top:-6px">Linki wyświetlane na stronie głównej. Puste pole = ikona ukryta.</p>
+    <label class="form-label">YouTube<input type="url" id="socialYoutube" placeholder="https://youtube.com/@twojkanal"></label>
+    <label class="form-label">Instagram<input type="url" id="socialInstagram" placeholder="https://instagram.com/twojprofil"></label>
+    <label class="form-label">TikTok<input type="url" id="socialTiktok" placeholder="https://tiktok.com/@twojprofil"></label>
+
     <div id="seoMsg" class="form-msg" style="display:none"></div>
-    <button type="submit" class="btn-submit">Zapisz SEO</button>
+    <button type="submit" class="btn-submit">Zapisz ustawienia</button>
   </form>
 </main>
 
@@ -282,7 +273,7 @@ async function extractExif(file) {
 }
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
-const tabPanels = { photos:'tabPhotos', galleries:'tabGalleries', profile:'tabProfile', menu:'tabMenu', habits:'tabHabits', seo:'tabSeo', password:'tabPassword' };
+const tabPanels = { photos:'tabPhotos', galleries:'tabGalleries', newsletter:'tabNewsletter', menu:'tabMenu', habits:'tabHabits', seo:'tabSeo', password:'tabPassword' };
 document.querySelectorAll('.admin-tab').forEach(tab => {
   tab.addEventListener('click', e => {
     e.preventDefault();
@@ -292,7 +283,7 @@ document.querySelectorAll('.admin-tab').forEach(tab => {
       document.getElementById(id).style.display = tab.dataset.tab === key ? '' : 'none';
     });
     if (tab.dataset.tab === 'galleries') loadGalleriesList();
-    if (tab.dataset.tab === 'profile')   loadProfileForm();
+    if (tab.dataset.tab === 'newsletter') loadNewsletterList();
     if (tab.dataset.tab === 'menu')      loadMenuList();
     if (tab.dataset.tab === 'habits')    loadHabitsList();
     if (tab.dataset.tab === 'seo')       loadSeoForm();
@@ -688,45 +679,41 @@ document.getElementById('gDeleteGallery').addEventListener('click', async () => 
 
 document.getElementById('gModalClose').addEventListener('click', () => document.getElementById('galleryModal').style.display = 'none');
 
-// ─── Profile ──────────────────────────────────────────────────────────────────
-async function loadProfileForm() {
-  const { data: p } = await sb.from('profile').select('*').eq('id', 1).single();
-  if (!p) return;
-  document.getElementById('profileName').value        = p.name || '';
-  document.getElementById('profileBio').value         = p.bio || '';
-  document.getElementById('profileLocation').value    = p.location || '';
-  document.getElementById('profileWebsite').value     = p.website || '';
-  document.getElementById('profileFollowLabel').value = p.follow_label || '';
-  document.getElementById('profileFollowUrl').value   = p.follow_url || '';
-  const ap = document.getElementById('avatarPreview');
-  ap.innerHTML = p.avatar
-    ? `<img src="${photoUrl(p.avatar)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover">`
-    : `<div style="width:80px;height:80px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:2rem">${(p.name||'?')[0].toUpperCase()}</div>`;
+// ─── Newsletter ───────────────────────────────────────────────────────────────
+let nlSubscribers = [];
+
+async function loadNewsletterList() {
+  const { data, error } = await sb.from('newsletter_subscribers').select('*').order('created_at', { ascending: false });
+  const list = document.getElementById('newsletterList');
+  if (error) { list.innerHTML = `<p class="empty" style="display:block;padding:1rem 0">Błąd: ${error.message}</p>`; return; }
+  nlSubscribers = data || [];
+  document.getElementById('nlCount').textContent = nlSubscribers.length ? `Liczba zapisanych: ${nlSubscribers.length}` : '';
+  if (!nlSubscribers.length) { list.innerHTML = '<p class="empty" style="display:block;padding:1rem 0">Brak zapisanych osób.</p>'; return; }
+  list.innerHTML = '';
+  nlSubscribers.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'admin-card';
+    div.style.cssText = 'flex-direction:row;align-items:center;justify-content:space-between;padding:.75rem 1rem';
+    div.innerHTML = `<span>${s.name} <span class="day-num">${s.email} · ${(s.created_at || '').slice(0, 10)}</span></span><button class="btn-danger btn-sm">Usuń</button>`;
+    div.querySelector('button').addEventListener('click', async () => {
+      if (!confirm('Usunąć tę osobę z newslettera?')) return;
+      await sb.from('newsletter_subscribers').delete().eq('id', s.id);
+      loadNewsletterList();
+    });
+    list.appendChild(div);
+  });
 }
 
-document.getElementById('profileForm').addEventListener('submit', async e => {
-  e.preventDefault();
-  const msg = document.getElementById('profileMsg');
-  const { error } = await sb.from('profile').update({
-    name:         document.getElementById('profileName').value,
-    bio:          document.getElementById('profileBio').value,
-    location:     document.getElementById('profileLocation').value,
-    website:      document.getElementById('profileWebsite').value,
-    follow_label: document.getElementById('profileFollowLabel').value,
-    follow_url:   document.getElementById('profileFollowUrl').value,
-  }).eq('id', 1);
-  if (error) { showMsg(msg, '✗ ' + error.message); return; }
-  showMsg(msg, '✓ Profil zapisany', 'success');
-});
-
-document.getElementById('avatarBtn').addEventListener('click', () => document.getElementById('avatarInput').click());
-document.getElementById('avatarInput').addEventListener('change', async function() {
-  const file = this.files[0]; if (!file) return;
-  const blob = await resizeImage(file, 300, 0.85);
-  const { error } = await sb.storage.from('photos').upload('avatar.webp', blob, { upsert: true, contentType: 'image/webp' });
-  if (error) { alert('Błąd uploadu avatara: ' + error.message); return; }
-  await sb.from('profile').update({ avatar: 'avatar.webp' }).eq('id', 1);
-  loadProfileForm();
+document.getElementById('nlExportBtn').addEventListener('click', () => {
+  const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const csv = ['name,email,created_at']
+    .concat(nlSubscribers.map(s => [esc(s.name), esc(s.email), esc(s.created_at)].join(',')))
+    .join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'newsletter.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
 });
 
 // ─── Menu ─────────────────────────────────────────────────────────────────────
@@ -797,6 +784,9 @@ async function loadSeoForm() {
   document.getElementById('seoTitle').value   = s.meta_title || '';
   document.getElementById('seoDesc').value    = s.meta_description || '';
   document.getElementById('seoOgImage').value = s.og_image || '';
+  document.getElementById('socialYoutube').value   = s.social_youtube || '';
+  document.getElementById('socialInstagram').value = s.social_instagram || '';
+  document.getElementById('socialTiktok').value    = s.social_tiktok || '';
 }
 
 document.getElementById('seoForm').addEventListener('submit', async e => {
@@ -806,6 +796,9 @@ document.getElementById('seoForm').addEventListener('submit', async e => {
     { key: 'meta_title',       value: document.getElementById('seoTitle').value },
     { key: 'meta_description', value: document.getElementById('seoDesc').value },
     { key: 'og_image',         value: document.getElementById('seoOgImage').value },
+    { key: 'social_youtube',   value: document.getElementById('socialYoutube').value },
+    { key: 'social_instagram', value: document.getElementById('socialInstagram').value },
+    { key: 'social_tiktok',    value: document.getElementById('socialTiktok').value },
   ];
   const { error } = await sb.from('site_settings').upsert(rows);
   if (error) { showMsg(msg, '✗ ' + error.message); return; }

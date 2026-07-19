@@ -374,7 +374,7 @@ main { max-width: 1600px; margin: 0 auto; padding: 1.5rem; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .form-label, label { display: flex; flex-direction: column; gap: 5px; font-size: 0.875rem; font-weight: 500; }
 
-input[type=text], input[type=number], input[type=date], textarea, select {
+input[type=text], input[type=number], input[type=date], input[type=email], input[type=url], input[type=password], textarea, select {
   width: 100%; padding: 9px 12px;
   border: 1.5px solid var(--border); border-radius: var(--radius);
   font-size: 0.9375rem; font-family: var(--font);
@@ -660,3 +660,54 @@ textarea { resize: vertical; min-height: 90px; }
   .nav-overlay__link { padding: 1.1rem 1.75rem; }
   .hamburger { width: 44px; height: 44px; }
 }
+
+/* ─── Landing page ───────────────────────────────────────────────────────────── */
+.landing { max-width: 640px; margin: 0 auto; padding: 3.5rem 1.5rem 4rem; }
+.lp-hero { margin-bottom: 3.5rem; }
+.lp-title { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 1rem; }
+.lp-lead { font-size: 1.2rem; font-weight: 500; line-height: 1.55; margin-bottom: 1rem; }
+.lp-text { font-size: 0.95rem; line-height: 1.7; color: var(--muted); margin-bottom: 0.9rem; }
+.lp-heading { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.75rem; }
+
+.lp-newsletter {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.75rem; margin-bottom: 3rem;
+}
+.lp-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.25rem; }
+.lp-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 540px) { .lp-form-row { grid-template-columns: 1fr; } }
+.lp-label { font-size: 0.875rem; font-weight: 500; }
+.lp-honeypot { position: absolute; left: -9999px; opacity: 0; height: 0; pointer-events: none; }
+.lp-consent {
+  flex-direction: row; align-items: flex-start; gap: 10px;
+  font-size: 0.8rem; font-weight: 400; color: var(--muted); line-height: 1.5;
+  cursor: pointer;
+}
+.lp-consent input { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; accent-color: var(--accent); cursor: pointer; }
+.lp-consent a { text-decoration: underline; }
+
+.lp-social { margin-bottom: 3rem; }
+.lp-social-links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1rem; }
+.lp-social-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1.5px solid var(--border); border-radius: 999px;
+  padding: 9px 18px; font-size: 0.875rem; font-weight: 600;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.lp-social-link:hover { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+.lp-365 { border-top: 1px solid var(--border); padding-top: 2.5rem; }
+.lp-365-btn { display: inline-block; margin-top: 0.5rem; }
+
+/* ─── Privacy page ───────────────────────────────────────────────────────────── */
+.privacy-page { max-width: 640px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+.privacy-page .lp-title { font-size: 1.8rem; margin-bottom: 2rem; }
+.privacy-page .lp-heading { font-size: 1.05rem; margin-top: 1.75rem; }
+
+/* ─── Page hero (Projekt 365) ────────────────────────────────────────────────── */
+.page-hero {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 2.25rem 1.5rem;
+}
+.page-hero-title { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; max-width: 700px; margin: 0 auto 0.5rem; }
+.page-hero-desc { font-size: 0.9rem; line-height: 1.65; color: var(--muted); max-width: 700px; margin: 0 auto; }

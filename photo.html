@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>365</title>
+<title>Projekt Lepiej</title>
 <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
 <link rel="stylesheet" href="static/css/main.css">
 </head>
@@ -63,7 +63,7 @@ async function loadMemories() {
 async function load() {
   const { data: p } = await sb.from('photos').select('*').eq('id', id).single();
   if (!p) { document.getElementById('app').innerHTML = '<p class="error">Nie znaleziono zdjęcia.</p>'; return; }
-  document.title = `${p.title} – 365`;
+  document.title = `${p.title} – Projekt Lepiej`;
 
   const { data: habits } = await sb.from('habits').select('*').eq('active', true).order('id');
   const { data: logs }   = await sb.from('habit_logs').select('*').eq('photo_id', id);
@@ -92,7 +92,7 @@ async function load() {
 
   document.getElementById('app').innerHTML = `
     <div class="photo-nav">
-      <a href="index.html" class="back-link">← Wszystkie zdjęcia</a>
+      <a href="projekt-365.html" class="back-link">← Wszystkie zdjęcia</a>
       <span class="day-badge">Dzień ${p.day}</span>
     </div>
     <div class="photo-layout">

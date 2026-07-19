@@ -4,7 +4,7 @@
 
   placeholder.outerHTML = `
 <header class="site-header">
-  <a href="/" class="logo">365</a>
+  <a href="index.html" class="logo">Projekt Lepiej</a>
   <nav class="site-nav" id="siteNav"></nav>
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -16,11 +16,11 @@
 </div>`;
 
   const { data: links } = await sb.from('nav_links').select('*').order('position');
-  const cur = location.pathname.replace(/index\.html$/, '');
+  const cur = location.pathname.split('/').pop() || 'index.html';
 
   const nav = document.getElementById('siteNav');
   nav.innerHTML = (links || []).map(l =>
-    `<a href="${l.url}" class="nav-link${cur === l.url || (cur.startsWith(l.url + '/') && l.url !== '/') ? ' active' : ''}">${l.title}</a>`
+    `<a href="${l.url}" class="nav-link${cur === l.url ? ' active' : ''}">${l.title}</a>`
   ).join('');
 
   const overlay = document.getElementById('navOverlayLinks');

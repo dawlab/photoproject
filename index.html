@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>365</title>
-<meta name="description" content="Codziennie jedno zdjęcie.">
+<title>Projekt Lepiej</title>
+<meta name="description" content="Moje miejsce w internecie o dążeniu do bycia lepszym.">
 <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
 <link rel="stylesheet" href="static/css/main.css">
 </head>
@@ -12,68 +12,122 @@
 
 <div id="header-placeholder"></div>
 
-<div class="profile-hero" id="profileHero"></div>
+<main class="landing">
 
-<div class="page-tabs">
-  <a href="index.html" class="page-tab active"><span id="tabPhotosCount">–</span> zdjęć</a>
-  <a href="galerie.html" class="page-tab"><span id="tabGalCount">–</span> galerii</a>
-  <a href="nastroje.html" class="page-tab">Nastroje i nawyki</a>
-</div>
+  <section class="lp-hero">
+    <h1 class="lp-title">Projekt Lepiej</h1>
+    <p class="lp-lead">
+      To moje miejsce w internecie. Piszę tu o dążeniu do bycia lepszym — przede wszystkim zawodowo.
+    </p>
+    <p class="lp-text">
+      Mam jeden cel: ułożyć swoje życie pod wolność. A wolność rozumiem konkretnie —
+      to moment, w którym nie muszę już sprzedawać swojego czasu za pieniądze.
+      Nie wiem jeszcze, ile ta droga potrwa. Wiem za to, że warto ją dokumentować.
+    </p>
+    <p class="lp-text">
+      Znajdziesz tu projekty, które realizuję, decyzje, które podejmuję po drodze,
+      i wnioski z tego, co wyszło — oraz z tego, co nie wyszło. Bez filtrów i bez pozowania na eksperta.
+    </p>
+  </section>
 
-<main>
-  <div class="photo-feed" id="feed"></div>
-  <div class="load-more-wrap" id="loadWrap" style="display:none">
-    <button class="btn-load" id="loadBtn">Załaduj więcej</button>
-  </div>
-  <p class="empty" id="empty" style="display:none">Brak zdjęć.</p>
+  <section class="lp-newsletter" id="newsletter">
+    <h2 class="lp-heading">Newsletter pisany przez człowieka</h2>
+    <p class="lp-text">
+      Co jakiś czas wysyłam list o tym, nad czym aktualnie pracuję i czego się nauczyłem.
+      Każde słowo piszę sam — w internecie zalanym treściami z automatu to dziś rzadkość,
+      a chyba właśnie tego potrzebujemy.
+    </p>
+
+    <form id="newsletterForm" class="lp-form" novalidate>
+      <div class="lp-form-row">
+        <label class="lp-label">Imię
+          <input type="text" id="nlName" name="name" placeholder="Twoje imię" required>
+        </label>
+        <label class="lp-label">E-mail
+          <input type="email" id="nlEmail" name="email" placeholder="twoj@adres.pl" required>
+        </label>
+      </div>
+      <input type="text" id="nlWebsite" name="website" tabindex="-1" autocomplete="off" class="lp-honeypot" aria-hidden="true">
+      <label class="lp-consent">
+        <input type="checkbox" id="nlConsent" required>
+        <span>Akceptuję <a href="polityka-prywatnosci.html" target="_blank">politykę prywatności</a> i wyrażam zgodę na otrzymywanie newslettera. <span class="req">*</span></span>
+      </label>
+      <div id="nlMsg" class="form-msg" style="display:none"></div>
+      <button type="submit" class="btn-submit" id="nlBtn">Zapisuję się</button>
+    </form>
+  </section>
+
+  <section class="lp-social" id="socialSection" style="display:none">
+    <h2 class="lp-heading">Śledź moją drogę</h2>
+    <div class="lp-social-links" id="socialLinks"></div>
+  </section>
+
+  <section class="lp-365">
+    <h2 class="lp-heading">Projekt 365</h2>
+    <p class="lp-text">
+      Jedno zdjęcie każdego dnia, przez cały rok. Najprostszy sposób, żeby ćwiczyć
+      konsekwencję i uważność jednocześnie.
+    </p>
+    <a href="projekt-365.html" class="btn-load lp-365-btn">Zobacz zdjęcia →</a>
+  </section>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="static/js/supabase.js"></script>
 <script src="static/js/header.js"></script>
-<script src="static/js/profile.js"></script>
-<script src="static/js/utils.js"></script>
 <script>
-let page = 1;
-const per = 30;
+// ─── Social links (z site_settings) ───────────────────────────────────────────
+const SOCIAL_ICONS = {
+  social_youtube:   { label: 'YouTube',   svg: '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>' },
+  social_instagram: { label: 'Instagram', svg: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.8" cy="6.2" r="1.2" fill="currentColor" stroke="none"/></svg>' },
+  social_tiktok:    { label: 'TikTok',    svg: '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 6.7a5 5 0 0 1-3.5-4.2V2h-3.4v13.3a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9.1a6.3 6.3 0 1 0 5.4 6.2V8.8a8.3 8.3 0 0 0 4.5 1.4V6.9c-.3 0-.7-.1-1-.2z"/></svg>' },
+};
 
-async function loadPhotos() {
-  const from = (page - 1) * per;
-  const { data, count } = await sb.from('photos')
-    .select('*', { count: 'exact' })
-    .order('day', { ascending: false })
-    .range(from, from + per - 1);
-
-  const feed = document.getElementById('feed');
-  if ((!data || !data.length) && page === 1) {
-    document.getElementById('empty').style.display = 'block'; return;
+(async () => {
+  const { data } = await sb.from('site_settings').select('*');
+  const s = {};
+  (data || []).forEach(r => { s[r.key] = r.value; });
+  const links = Object.entries(SOCIAL_ICONS)
+    .filter(([key]) => s[key])
+    .map(([key, ic]) =>
+      `<a href="${s[key]}" target="_blank" rel="noopener" class="lp-social-link" aria-label="${ic.label}">${ic.svg}<span>${ic.label}</span></a>`);
+  if (links.length) {
+    document.getElementById('socialLinks').innerHTML = links.join('');
+    document.getElementById('socialSection').style.display = '';
   }
-  (data || []).forEach(p => {
-    const a = document.createElement('a');
-    a.className = 'feed-card';
-    a.href = `photo.html?id=${p.id}`;
-    if (p.width && p.height) a.style.flexGrow = (p.width / p.height).toFixed(4);
-    const date = photoDate(p);
-    a.innerHTML = `
-      <div class="feed-card__img">
-        <img src="${thumbUrl(p.thumb)}" alt="${p.title}" loading="lazy" onload="this.parentElement.style.animation='none'">
-      </div>
-      <div class="feed-card__meta">
-        <div class="card-meta-top">
-          <span class="day-num">Dzień ${p.day}</span>
-          ${date ? `<span class="card-date">${date}</span>` : ''}
-        </div>
-        <span class="card-title">${p.title}</span>
-      </div>`;
-    feed.appendChild(a);
-  });
-  page++;
-  document.getElementById('loadWrap').style.display = (page - 1) * per < (count || 0) ? 'flex' : 'none';
-}
+})();
 
-document.getElementById('loadBtn').addEventListener('click', loadPhotos);
-loadProfile('profileHero', 'tabPhotosCount', 'tabGalCount');
-loadPhotos();
+// ─── Newsletter ───────────────────────────────────────────────────────────────
+document.getElementById('newsletterForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('nlBtn');
+  const consent = document.getElementById('nlConsent');
+  const name  = document.getElementById('nlName').value.trim();
+  const email = document.getElementById('nlEmail').value.trim().toLowerCase();
+  document.getElementById('nlMsg').style.display = 'none';
+
+  if (document.getElementById('nlWebsite').value) { showNlMsg('✓ Dzięki! Jesteś na liście.', 'success'); return; } // honeypot
+  if (!name) { showNlMsg('Podaj imię.', 'error'); return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showNlMsg('Podaj poprawny adres e-mail.', 'error'); return; }
+  if (!consent.checked) { showNlMsg('Aby się zapisać, zaakceptuj politykę prywatności.', 'error'); return; }
+
+  btn.disabled = true; btn.textContent = 'Zapisywanie…';
+  const { error } = await sb.from('newsletter_subscribers').insert({ name, email, consent: true });
+  btn.disabled = false; btn.textContent = 'Zapisuję się';
+  if (error) {
+    showNlMsg('✗ ' + (error.code === '23505' ? 'Ten adres jest już zapisany.' : 'Coś poszło nie tak, spróbuj ponownie.'), 'error');
+    return;
+  }
+  showNlMsg('✓ Dzięki! Jesteś na liście.', 'success');
+  e.target.reset();
+});
+function showNlMsg(text, type) {
+  const msg = document.getElementById('nlMsg');
+  msg.textContent = text;
+  msg.className = 'form-msg form-msg--' + type;
+  msg.style.display = 'block';
+}
 </script>
 </body>
 </html>
