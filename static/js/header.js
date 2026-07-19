@@ -35,4 +35,14 @@
   ham.addEventListener('click', () => { box.classList.add('open'); ham.classList.add('open'); document.body.style.overflow = 'hidden'; });
   close.addEventListener('click', closeMenu);
   box.addEventListener('click', e => { if (e.target === box) closeMenu(); });
+
+  // ── Footer (wspólna dla wszystkich stron) ──
+  if (!document.querySelector('.site-footer')) {
+    const footer = document.createElement('footer');
+    footer.className = 'site-footer';
+    footer.innerHTML = `
+      <span class="site-footer__brand">Projekt Lepiej © ${new Date().getFullYear()}</span>
+      <a href="polityka-prywatnosci.html" class="site-footer__link">Polityka prywatności</a>`;
+    document.body.appendChild(footer);
+  }
 })();

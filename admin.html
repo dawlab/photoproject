@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin – Projekt Lepiej</title>
 <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
-<link rel="stylesheet" href="static/css/main.css">
+<link rel="stylesheet" href="static/css/main.css?v=lepiej-2">
 </head>
 <body>
 
@@ -231,7 +231,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
-<script src="static/js/supabase.js"></script>
+<script src="static/js/supabase.js?v=lepiej-2"></script>
 <script>
 // ─── Auth guard ───────────────────────────────────────────────────────────────
 (async () => {
@@ -615,34 +615,45 @@ async function openGalleryModal(gid) {
   await refreshGalleryModal();
 }
 
+let galleryInGallery = new Set();
+
 async function refreshGalleryModal() {
   const gid = currentGalleryId;
   const { data: gp } = await sb.from('gallery_photos').select('photo_id, photos(*)').eq('gallery_id', gid).order('position');
-  const inGallery = new Set((gp || []).map(r => r.photo_id));
+  // newest first, matching the public feed
+  const inPhotos = (gp || []).map(r => r.photos).filter(Boolean).sort((a, b) => b.day - a.day);
+  galleryInGallery = new Set(inPhotos.map(p => p.id));
 
   const curr = document.getElementById('gCurrentPhotos');
   curr.innerHTML = '';
-  (gp || []).forEach(({ photo_id, photos: p }) => {
-    if (!p) return;
-    const div = document.createElement('div'); div.className = 'gallery-photo-item';
-    div.innerHTML = `<img src="${thumbUrl(p.thumb)}" alt="${p.title}"><button class="btn-danger btn-sm" data-pid="${photo_id}">✕</button>`;
+  if (!inPhotos.length) {
+    curr.innerHTML = '<p class="drop-hint" style="grid-column:1/-1">Brak zdjęć w galerii.</p>';
+  }
+  inPhotos.forEach(p => {
+    const div = document.createElement('div'); div.className = 'gphoto-card';
+    div.innerHTML = `<img src="${thumbUrl(p.thumb)}" alt="${p.title}"><div class="gphoto-label">#${p.day}</div><button class="gphoto-remove" data-pid="${p.id}" title="Usuń z galerii">✕</button>`;
     div.querySelector('button').addEventListener('click', async () => {
-      await sb.from('gallery_photos').delete().eq('gallery_id', gid).eq('photo_id', photo_id);
+      await sb.from('gallery_photos').delete().eq('gallery_id', gid).eq('photo_id', p.id);
       refreshGalleryModal();
     });
     curr.appendChild(div);
   });
 
-  renderGalleryAllPhotos(inGallery);
+  renderGalleryAllPhotos(document.getElementById('gSearch').value);
 }
 
-function renderGalleryAllPhotos(inGallery, filter = '') {
+function renderGalleryAllPhotos(filter = '') {
   const all = document.getElementById('gAllPhotos');
   all.innerHTML = '';
-  const photos = allPhotos.filter(p => !inGallery.has(p.id) && (!filter || p.title.toLowerCase().includes(filter.toLowerCase()) || String(p.day).includes(filter)));
-  photos.slice(0, 40).forEach(p => {
-    const div = document.createElement('div'); div.className = 'gallery-photo-item';
-    div.innerHTML = `<img src="${thumbUrl(p.thumb)}" alt="${p.title}"><button class="btn-submit btn-sm" data-pid="${p.id}">+</button>`;
+  const f = filter.trim().toLowerCase();
+  const photos = allPhotos.filter(p => !galleryInGallery.has(p.id) && (!f || p.title.toLowerCase().includes(f) || String(p.day).includes(f)));
+  if (!photos.length) {
+    all.innerHTML = '<p class="drop-hint" style="grid-column:1/-1">Brak zdjęć do dodania.</p>';
+    return;
+  }
+  photos.slice(0, 60).forEach(p => {
+    const div = document.createElement('div'); div.className = 'gphoto-card';
+    div.innerHTML = `<img src="${thumbUrl(p.thumb)}" alt="${p.title}"><div class="gphoto-label">#${p.day}</div><button class="gphoto-add" data-pid="${p.id}" title="Dodaj do galerii">+</button>`;
     div.querySelector('button').addEventListener('click', async () => {
       await sb.from('gallery_photos').upsert({ gallery_id: currentGalleryId, photo_id: p.id });
       const { data: g } = await sb.from('galleries').select('cover_photo_id').eq('id', currentGalleryId).single();
@@ -653,11 +664,7 @@ function renderGalleryAllPhotos(inGallery, filter = '') {
   });
 }
 
-document.getElementById('gSearch').addEventListener('input', e => {
-  const gp = document.getElementById('gCurrentPhotos');
-  const inGallery = new Set([...gp.querySelectorAll('button')].map(b => parseInt(b.dataset.pid)));
-  renderGalleryAllPhotos(inGallery, e.target.value);
-});
+document.getElementById('gSearch').addEventListener('input', e => renderGalleryAllPhotos(e.target.value));
 
 document.getElementById('gSaveBtn').addEventListener('click', async () => {
   const msg = document.getElementById('gEditMsg');
