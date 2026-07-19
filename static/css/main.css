@@ -252,6 +252,16 @@ main { max-width: 1600px; margin: 0 auto; padding: 1.5rem; }
     height: 100%;
     object-fit: cover;
   }
+
+  /* Galeria: karty w naturalnych proporcjach (stała wysokość, szerokość z aspect ratio).
+     Nie rozciągają się na całą szerokość przy małej liczbie zdjęć. */
+  .gallery-feed { justify-content: flex-start; gap: 10px; }
+  .gallery-feed .feed-card {
+    flex: 0 0 auto;
+    width: calc(300px * var(--ratio, 1.5));
+    max-width: 100%;
+  }
+  .gallery-feed .feed-card__img { height: 300px; }
 }
 
 .card-meta-top { display: flex; align-items: center; gap: 8px; }
