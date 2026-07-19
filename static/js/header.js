@@ -4,7 +4,7 @@
 
   placeholder.outerHTML = `
 <header class="site-header">
-  <a href="index.html" class="logo">Projekt Lepiej</a>
+  <a href="index.html" class="logo">Projekt&nbsp;<span class="logo-accent">Lepiej</span></a>
   <nav class="site-nav" id="siteNav"></nav>
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>

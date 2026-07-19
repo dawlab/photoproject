@@ -726,7 +726,39 @@ textarea { resize: vertical; min-height: 90px; }
 .site-footer__link { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
 .site-footer__link:hover { color: var(--text); }
 
-/* ═══ Landing — kolorowy, nowoczesny redesign (tylko strona główna) ════════════ */
+/* ═══ Wspólna paleta marki (niebieski) ═════════════════════════════════════════ */
+:root {
+  --brand-navy: #172554;
+  --brand-blue: #1d4ed8;
+  --brand-blue-2: #2563eb;
+  --brand-blue-3: #3b82f6;
+  --brand-grad: linear-gradient(105deg, #172554 0%, #1e40af 48%, #2563eb 100%);
+  --brand-tint: #eff4ff;
+  --brand-border: #dbe4fb;
+}
+
+/* Wspólny nagłówek gradientowy — homepage + podstrony */
+.brand-gradient-text {
+  background: var(--brand-grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* ═══ Logo w navbarze ══════════════════════════════════════════════════════════ */
+.logo {
+  font-family: 'Space Grotesk', var(--font);
+  font-weight: 700; letter-spacing: -0.03em;
+}
+.logo .logo-accent {
+  background: linear-gradient(100deg, #1d4ed8, #3b82f6);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* Aktywna zakładka i podkreślenia w kolorze marki */
+.page-tab.active { border-bottom-color: var(--brand-blue-2); }
+
+/* ═══ Landing — nowoczesny redesign w odcieniach niebieskiego ══════════════════ */
 body:has(.landing) { background: #ffffff; }
 
 .landing {
@@ -734,114 +766,113 @@ body:has(.landing) { background: #ffffff; }
   max-width: 680px;
   padding: 4rem 1.5rem 4rem;
 }
-/* miękka kolorowa poświata w tle hero */
+/* miękka niebieska poświata w tle hero */
 .landing::before {
   content: "";
   position: absolute; inset: -10% -20% auto -20%; height: 480px; z-index: -1;
   background:
-    radial-gradient(40% 55% at 15% 0%, rgba(99,102,241,.20), transparent 70%),
-    radial-gradient(45% 55% at 90% 15%, rgba(251,113,133,.20), transparent 70%),
-    radial-gradient(40% 50% at 60% 0%, rgba(249,115,22,.14), transparent 70%);
-  filter: blur(8px);
+    radial-gradient(42% 55% at 18% 0%, rgba(37,99,235,.18), transparent 70%),
+    radial-gradient(46% 55% at 85% 12%, rgba(59,130,246,.16), transparent 70%),
+    radial-gradient(40% 50% at 58% 0%, rgba(23,37,84,.10), transparent 70%);
+  filter: blur(6px);
   pointer-events: none;
 }
 
 .landing .lp-hero { margin-bottom: 3rem; }
 .landing .lp-title {
+  font-family: 'Space Grotesk', var(--font);
   font-size: clamp(2.1rem, 6vw, 3rem);
-  font-weight: 800; letter-spacing: -0.035em; line-height: 1.08;
+  font-weight: 700; letter-spacing: -0.03em; line-height: 1.1;
   margin-bottom: 1.25rem;
-  background: linear-gradient(105deg, #4f46e5 0%, #7c3aed 40%, #ec4899 72%, #f97316 100%);
+  background: var(--brand-grad);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
 }
 .landing .lp-lead { font-size: 1.2rem; font-weight: 600; color: var(--text); line-height: 1.5; margin-bottom: 1rem; }
-.landing .lp-text { font-size: 0.98rem; line-height: 1.75; color: #55555a; }
+.landing .lp-text { font-size: 0.98rem; line-height: 1.75; color: #4a5568; }
 .landing .lp-heading {
   font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em;
-  display: inline-block; margin-bottom: 0.85rem;
+  color: var(--brand-navy); display: inline-block; margin-bottom: 0.85rem;
 }
 
-/* Newsletter — wyróżniona kolorowa karta */
+/* Newsletter — wyróżniona karta */
 .landing .lp-newsletter {
   position: relative;
-  background: linear-gradient(180deg, #ffffff, #fbfaff);
-  border: 1px solid #ece9fb;
+  background: linear-gradient(180deg, #ffffff, #f7faff);
+  border: 1px solid var(--brand-border);
   border-radius: 18px;
   padding: 2rem;
   margin-bottom: 3.5rem;
-  box-shadow: 0 18px 40px -24px rgba(79,70,229,.45), 0 2px 8px rgba(17,17,17,.04);
+  box-shadow: 0 18px 40px -24px rgba(29,78,216,.40), 0 2px 8px rgba(17,17,17,.04);
   overflow: hidden;
 }
 .landing .lp-newsletter::before {
   content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-  background: linear-gradient(90deg, #4f46e5, #ec4899, #f97316);
-}
-.landing .lp-newsletter .lp-heading {
-  background: linear-gradient(100deg, #4f46e5, #ec4899);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
+  background: linear-gradient(90deg, #172554, #1d4ed8, #3b82f6);
 }
 .landing .lp-form input[type=text],
 .landing .lp-form input[type=email] {
-  border-radius: 10px; border-color: #e3e0f2; background: #fff;
+  border-radius: 10px; border-color: #d5e0f5; background: #fff;
 }
-.landing .lp-form input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
-.landing .lp-consent a { color: #6d28d9; }
+.landing .lp-form input:focus { border-color: var(--brand-blue-2); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+.landing .lp-consent a { color: var(--brand-blue); }
 
-/* Przyciski — gradientowe */
+/* Przyciski — gradient niebieski */
 .landing .btn-submit,
 .landing .lp-365-btn {
-  background: linear-gradient(100deg, #4f46e5, #7c3aed);
+  background: linear-gradient(100deg, #1d4ed8, #2563eb);
   border-radius: 999px; border: none;
-  box-shadow: 0 10px 22px -10px rgba(79,70,229,.65);
+  box-shadow: 0 10px 22px -10px rgba(29,78,216,.60);
   transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
 }
 .landing .btn-submit:hover:not(:disabled),
 .landing .lp-365-btn:hover {
-  filter: brightness(1.06);
+  filter: brightness(1.07);
   transform: translateY(-1px);
-  box-shadow: 0 14px 26px -10px rgba(79,70,229,.75);
+  box-shadow: 0 14px 26px -10px rgba(29,78,216,.72);
   color: #fff;
 }
 
 /* Sekcja social + „Czym jest…" */
 .landing .lp-social { margin-bottom: 3.5rem; }
-.landing .lp-social .lp-heading {
-  background: linear-gradient(100deg, #ec4899, #f97316);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-}
 .landing .lp-social-links { gap: 12px; }
 .landing .lp-social-link {
   border: 1.5px solid var(--border); border-radius: 14px;
   padding: 11px 20px; font-weight: 700; background: #fff; color: var(--text);
   transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, color 0.15s, background 0.15s;
 }
-.landing .lp-social-link:hover { transform: translateY(-2px); color: #fff; }
-.landing .lp-social-link[aria-label="YouTube"]:hover  { background: #ff0033; border-color: #ff0033; box-shadow: 0 10px 22px -12px rgba(255,0,51,.8); }
-.landing .lp-social-link[aria-label="TikTok"]:hover   { background: #000; border-color: #000; box-shadow: 0 10px 22px -12px rgba(0,0,0,.6); }
-.landing .lp-social-link[aria-label="Instagram"]:hover {
-  background: linear-gradient(45deg, #f9ce34, #ee2a7b 50%, #6228d7);
-  border-color: transparent; box-shadow: 0 10px 22px -12px rgba(238,42,123,.8);
-}
+.landing .lp-social-link:hover { transform: translateY(-2px); border-color: var(--brand-blue-2); color: var(--brand-blue); box-shadow: 0 10px 22px -14px rgba(37,99,235,.6); }
 
-/* Projekt 365 — kolorowa karta CTA */
+/* Projekt 365 — karta CTA w tonacji niebieskiej */
 .landing .lp-365 {
   border-top: none;
-  background: linear-gradient(135deg, #eef2ff 0%, #fdf2f8 55%, #fff7ed 100%);
-  border: 1px solid #ece9fb;
+  background: linear-gradient(135deg, #eff4ff 0%, #f5f9ff 60%, #ffffff 100%);
+  border: 1px solid var(--brand-border);
   border-radius: 18px;
   padding: 2rem;
 }
-.landing .lp-365 .lp-heading { color: var(--text); font-size: 1.15rem; }
+.landing .lp-365 .lp-heading { color: var(--brand-navy); font-size: 1.15rem; }
 .landing .lp-subheading {
-  font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin: 0.5rem 0 0.75rem;
-  background: linear-gradient(100deg, #7c3aed, #ec4899);
+  font-family: 'Space Grotesk', var(--font);
+  font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; margin: 0.5rem 0 0.75rem;
+  background: linear-gradient(100deg, #1d4ed8, #3b82f6);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
 }
 
 @media (max-width: 540px) {
   .landing .lp-newsletter, .landing .lp-365 { padding: 1.5rem; }
+}
+
+/* ═══ Page hero (Projekt 365) — spójna tonacja z homepage ══════════════════════ */
+.page-hero {
+  background: linear-gradient(180deg, var(--brand-tint), #ffffff);
+  border-bottom: 1px solid var(--brand-border);
+}
+.page-hero-title {
+  font-family: 'Space Grotesk', var(--font);
+  font-weight: 700; letter-spacing: -0.03em;
+  background: var(--brand-grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
 }
