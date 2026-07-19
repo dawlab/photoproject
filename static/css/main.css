@@ -788,8 +788,39 @@ body:has(.landing) { background: #ffffff; }
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
 }
-.landing .lp-lead { font-size: 1.2rem; font-weight: 600; color: var(--text); line-height: 1.5; margin-bottom: 1rem; }
+.landing .lp-lead { font-size: 1.2rem; font-weight: 600; color: var(--text); line-height: 1.5; margin-bottom: 1.25rem; }
 .landing .lp-text { font-size: 0.98rem; line-height: 1.75; color: #4a5568; }
+
+/* wyróżniona definicja wolności */
+.landing .lp-callout {
+  margin: 1.5rem 0;
+  padding: 1.1rem 1.35rem;
+  border-left: 4px solid var(--brand-blue-2);
+  background: var(--brand-tint);
+  border-radius: 0 14px 14px 0;
+  font-size: 1.05rem; line-height: 1.6; color: #2a3550; font-weight: 500;
+}
+.landing .lp-callout__label {
+  display: block; margin-bottom: 0.3rem;
+  font-weight: 700; color: var(--brand-navy);
+}
+
+/* obszary życia jako chipsy */
+.landing .lp-areas-intro { margin-top: 1.5rem; margin-bottom: 0.85rem; }
+.landing .lp-tags {
+  list-style: none; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 9px;
+}
+.landing .lp-tags li {
+  font-size: 0.9rem; font-weight: 600; color: var(--brand-blue);
+  background: #fff; border: 1.5px solid var(--brand-border);
+  padding: 7px 16px; border-radius: 999px;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.landing .lp-tags li:hover {
+  transform: translateY(-1px); border-color: var(--brand-blue-2);
+  box-shadow: 0 8px 18px -12px rgba(37,99,235,.55);
+}
 .landing .lp-heading {
   font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em;
   color: var(--brand-navy); display: inline-block; margin-bottom: 0.85rem;
