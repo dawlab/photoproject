@@ -126,7 +126,7 @@ function renderMoodCalendar(entries, year) {
     dot.className = 'cal-dot';
     if (entry && MOODS[entry.mood]) {
       dot.style.background = MOODS[entry.mood].color;
-      dot.title = `${dateStr} — ${MOODS[entry.mood].label}`;
+      dot.title = `${dateStr} – ${MOODS[entry.mood].label}`;
       dot.classList.add('cal-dot--filled');
       dot.addEventListener('click', () => location.href = `photo.html?id=${entry.id}`);
     } else { dot.classList.add('cal-dot--none'); }
@@ -143,7 +143,7 @@ function renderHabitCalendar(entries, year) {
     dot.className = 'cal-dot';
     if (entry !== undefined) {
       dot.classList.add(entry.done ? 'cal-dot--habit-done' : 'cal-dot--habit-fail', 'cal-dot--filled');
-      dot.title = `${dateStr} — ${entry.done ? 'Zrealizowano ✓' : 'Nie udało się ✗'}`;
+      dot.title = `${dateStr} – ${entry.done ? 'Zrealizowano ✓' : 'Nie udało się ✗'}`;
       dot.addEventListener('click', () => location.href = `photo.html?id=${entry.id}`);
     } else { dot.classList.add('cal-dot--none'); }
     dots.appendChild(dot);
