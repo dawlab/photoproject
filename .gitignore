@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+._*
+
+# Backup Supabase (duży, dane osobowe — nigdy do repo)
+backup-supabase-*/
+
+# Środowisko / sekrety
+.env
+
+# Python
+__pycache__/
+*.pyc
