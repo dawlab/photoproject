@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const STATIC_CACHE = `photo365-static-${CACHE_VERSION}`;
 const API_CACHE    = `photo365-api-${CACHE_VERSION}`;
 
