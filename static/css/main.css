@@ -773,128 +773,189 @@ textarea { resize: vertical; min-height: 90px; }
 /* Aktywna zakładka i podkreślenia w kolorze marki */
 .page-tab.active { border-bottom-color: var(--brand-blue-2); }
 
-/* ═══ Landing — prosto, duży font, mocny kontrast ══════════════════════════════ */
-body:has(.landing) { background: #ffffff; }
+/* ═══ Landing — styl „kokpit" (ciemny, Archivo + IBM Plex Mono, zielony akcent) ═ */
+body:has(.landing) {
+  --bg: #0b0d10; --panel: #14181d; --panel-2: #1a1f26;
+  --line: rgba(225,232,240,.14); --line-soft: rgba(225,232,240,.07);
+  --cream: #f0f4f8; --muted: #9aa7b5; --muted-2: #67737f;
+  --steel: #96a3b2; --steel-dim: rgba(150,163,178,.5);
+  --green: #22c55e; --green-hi: #16a34a; --green-ink: #04160b;
+  --input-bg: rgba(225,232,240,.05); --input-bg-f: rgba(225,232,240,.09);
+  --font-d: 'Archivo', var(--font); --font-m: 'IBM Plex Mono', monospace;
+  background: var(--bg); color: var(--cream);
+  font-family: var(--font-d);
+}
+/* subtelny grain */
+body:has(.landing)::after {
+  content: ""; position: fixed; inset: -100%; z-index: 9000; pointer-events: none; opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
 
+/* ── Nagłówek / nawigacja na landingu (ciemny) ── */
+body:has(.landing) .site-header {
+  background: rgba(11,13,16,.72); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line-soft);
+}
+body:has(.landing) .logo {
+  font-family: var(--font-m); font-weight: 500; font-size: 12px;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--cream);
+}
+body:has(.landing) .logo .logo-accent { color: var(--muted); background: none; -webkit-text-fill-color: currentColor; }
+body:has(.landing) .nav-link {
+  font-family: var(--font-m); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+}
+body:has(.landing) .nav-link:hover { color: var(--steel); background: var(--input-bg-f); }
+body:has(.landing) .nav-link.active { background: var(--green); color: var(--green-ink); }
+body:has(.landing) .hamburger span { background: var(--steel); }
+body:has(.landing) .nav-overlay__links { background: var(--panel); }
+body:has(.landing) .nav-overlay__link { color: var(--cream); }
+body:has(.landing) .nav-overlay__link:hover { background: var(--input-bg-f); }
+body:has(.landing) .nav-overlay__link.active { border-left-color: var(--green); color: var(--green); }
+
+/* ── Stopka na landingu ── */
+body:has(.landing) .site-footer {
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--font-m); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-2);
+}
+body:has(.landing) .site-footer__link { color: var(--muted-2); }
+body:has(.landing) .site-footer__link:hover { color: var(--steel); }
+
+/* ── Kontener ── */
 .landing {
-  max-width: 840px;
-  margin: 0 auto;
-  padding: 4.5rem 1.5rem 5rem;
-  color: var(--pl-ink);
+  max-width: 1180px; margin: 0 auto;
+  padding: clamp(72px,10vh,110px) clamp(20px,4vw,48px) clamp(48px,7vh,88px);
+  color: var(--cream);
 }
 
-.landing .lp-hero { margin-bottom: 4.5rem; }
+/* eyebrow + mono kickery */
+.landing .lp-eyebrow, .landing .lp-kicker {
+  font-family: var(--font-m); font-weight: 500; text-transform: uppercase;
+}
+.landing .lp-eyebrow {
+  font-size: clamp(10px,.85vw,11.5px); letter-spacing: .19em; line-height: 2; color: var(--muted); margin: 0 0 .25rem;
+}
+.landing .lp-eyebrow span { display: block; }
+.landing .lp-kicker {
+  font-size: 10px; letter-spacing: .24em; color: var(--steel-dim); margin: 0 0 .9rem;
+}
+
+/* hero */
+.landing .lp-hero { margin-bottom: clamp(3rem,7vh,5rem); }
 .landing .lp-title {
-  font-family: 'Space Grotesk', var(--font);
-  font-size: clamp(2.6rem, 7vw, 4.25rem);
-  font-weight: 700; letter-spacing: -0.035em; line-height: 1.02;
-  color: var(--pl-ink); margin-bottom: 1.75rem;
+  font-family: var(--font-d); font-weight: 800;
+  font-size: clamp(2.35rem,5vw,3.7rem); line-height: 1.04; letter-spacing: -.03em;
+  color: var(--cream); margin: 1rem 0 0; max-width: 20ch;
 }
-.landing .lp-title em { font-style: normal; color: var(--pl-accent); }
-
+.landing .lp-title em { font-style: normal; color: var(--green); }
 .landing .lp-lead {
-  font-size: clamp(1.25rem, 2.6vw, 1.6rem);
-  font-weight: 500; line-height: 1.4; color: var(--pl-ink);
-  margin-bottom: 2rem;
+  font-family: var(--font-d); font-size: clamp(1.05rem,1.5vw,1.2rem); font-weight: 400;
+  color: var(--muted); line-height: 1.6; margin: 1.4rem 0 0; max-width: 44rem;
 }
-.landing .lp-text { font-size: 1.15rem; line-height: 1.65; color: var(--pl-muted); margin-bottom: 1.1rem; }
+.landing .lp-text { font-family: var(--font-d); font-size: 1.05rem; line-height: 1.65; color: var(--muted); margin-bottom: 1.1rem; max-width: 44rem; }
 
-/* definicja wolności — bez pastelu, mocny akcent */
+/* definicja wolności — panel z zielonym akcentem */
 .landing .lp-callout {
-  margin: 2.25rem 0;
-  padding: 0.15rem 0 0.15rem 1.5rem;
-  border-left: 4px solid var(--pl-accent);
-  font-size: clamp(1.2rem, 2.2vw, 1.45rem); line-height: 1.45;
-  color: var(--pl-ink); font-weight: 500;
+  margin: 2rem 0; padding: 1.35rem 1.5rem;
+  background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--green);
+  border-radius: 8px; color: var(--cream); font-weight: 400;
+  font-size: 1.12rem; line-height: 1.55; max-width: 44rem;
 }
 .landing .lp-callout__label {
-  display: block; margin-bottom: 0.5rem;
-  font-weight: 700; color: var(--pl-accent);
-  font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em;
+  display: block; margin-bottom: .6rem;
+  font-family: var(--font-m); font-weight: 500; font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--green);
 }
 
-/* obszary życia jako proste pigułki */
-.landing .lp-areas-intro { margin-top: 2.25rem; margin-bottom: 1rem; font-weight: 600; color: var(--pl-ink); font-size: 1.1rem; }
-.landing .lp-tags { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+/* obszary życia — pigułki mono */
+.landing .lp-areas-intro {
+  margin: 2.25rem 0 1rem;
+  font-family: var(--font-m); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--steel-dim);
+}
+.landing .lp-tags { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 9px; }
 .landing .lp-tags li {
-  font-size: 1rem; font-weight: 600; color: var(--pl-ink);
-  background: #fff; border: 1.5px solid var(--pl-ink);
-  padding: 8px 18px; border-radius: 999px;
-  transition: background 0.15s, color 0.15s;
+  font-family: var(--font-m); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); background: var(--input-bg); border: 1px solid var(--line);
+  padding: 9px 15px; border-radius: 999px;
+  transition: border-color .2s, color .2s;
 }
-.landing .lp-tags li:hover { background: var(--pl-ink); color: #fff; }
+.landing .lp-tags li:hover { border-color: var(--steel-dim); color: var(--cream); }
 
+/* nagłówki sekcji */
 .landing .lp-heading {
-  font-family: 'Space Grotesk', var(--font);
-  font-size: clamp(1.8rem, 3.6vw, 2.35rem); font-weight: 700; letter-spacing: -0.03em;
-  color: var(--pl-ink); margin-bottom: 1rem;
+  font-family: var(--font-d); font-weight: 800; letter-spacing: -.02em;
+  font-size: clamp(1.6rem,3vw,2.1rem); color: var(--cream); margin-bottom: .75rem;
 }
 
-/* Sekcje oddzielone linią zamiast kart */
+/* sekcje oddzielone linią */
 .landing .lp-newsletter,
 .landing .lp-social,
 .landing .lp-365 {
-  margin-bottom: 0; padding: 3.75rem 0;
-  border-top: 1px solid var(--pl-line);
-  background: none; border-radius: 0; box-shadow: none;
+  margin: 0; padding: clamp(2.5rem,5vh,3.5rem) 0;
+  border-top: 1px solid var(--line-soft); background: none; border-radius: 0; box-shadow: none;
 }
 .landing .lp-newsletter::before { display: none; }
 
-.landing .lp-form { margin-top: 1.5rem; max-width: 540px; }
+/* formularz — styl MA */
+.landing .lp-form { margin-top: 1.5rem; max-width: 620px; }
 .landing .lp-form input[type=text],
 .landing .lp-form input[type=email] {
-  border-radius: 8px; border: 1.5px solid #d4d5da; background: #fff;
-  font-size: 1rem; padding: 12px 14px;
+  background: var(--input-bg); border: 1px solid var(--line); border-radius: 5px;
+  padding: 15px 16px; color: var(--cream); font: 500 15px var(--font-m); letter-spacing: .02em;
 }
-.landing .lp-form input:focus { border-color: var(--pl-accent); box-shadow: 0 0 0 3px rgba(43,58,255,.15); }
-.landing .lp-consent a { color: var(--pl-accent); }
+.landing .lp-form input::placeholder { color: var(--muted-2); }
+.landing .lp-form input:focus { border-color: var(--steel); background: var(--input-bg-f); box-shadow: none; }
+.landing .lp-label { font-family: var(--font-m); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-2); font-weight: 500; }
+.landing .lp-consent { font-family: var(--font-m); font-size: 11.5px; color: var(--muted-2); line-height: 1.55; }
+.landing .lp-consent input { accent-color: var(--green); }
+.landing .lp-consent a { color: var(--muted); }
+.landing .lp-consent a:hover { color: var(--steel); }
 
-/* Przyciski — solidny, mocny akcent */
+/* przyciski — zielone mono uppercase */
 .landing .btn-submit,
 .landing .lp-365-btn {
-  background: var(--pl-accent); color: #fff; border: none;
-  border-radius: 10px; font-size: 1.05rem; font-weight: 700;
-  padding: 14px 30px; box-shadow: none;
-  transition: transform 0.12s, background 0.15s;
+  background: var(--green); color: var(--green-ink); border: none; border-radius: 5px;
+  font: 600 13px var(--font-m); letter-spacing: .14em; text-transform: uppercase;
+  padding: 15px 26px; box-shadow: none;
+  transition: transform .2s, background .2s;
 }
 .landing .btn-submit:hover:not(:disabled),
-.landing .lp-365-btn:hover { background: var(--pl-accent-ink); transform: translateY(-1px); color: #fff; }
+.landing .lp-365-btn:hover { background: var(--green-hi); color: var(--green-ink); transform: translateY(-2px); }
+.landing .form-msg--success { background: none; border: none; color: var(--green); padding: 0; font-family: var(--font-m); font-size: 12px; }
+.landing .form-msg--error { background: none; border: none; color: #ff6b57; padding: 0; font-family: var(--font-m); font-size: 12px; }
 
-.landing .lp-social-links { gap: 12px; margin-top: 1.5rem; }
+/* social — pigułki mono */
+.landing .lp-social-links { gap: 10px; margin-top: 1.5rem; }
 .landing .lp-social-link {
-  border: 1.5px solid var(--pl-ink); border-radius: 10px;
-  padding: 11px 20px; font-weight: 700; background: #fff; color: var(--pl-ink);
-  transition: background 0.15s, color 0.15s;
+  font-family: var(--font-m); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 500;
+  background: var(--input-bg); border: 1px solid var(--line); color: var(--muted);
+  border-radius: 8px; padding: 11px 18px;
+  transition: border-color .2s, color .2s, background .2s;
 }
-.landing .lp-social-link:hover { background: var(--pl-ink); color: #fff; }
+.landing .lp-social-link:hover { border-color: var(--steel-dim); color: var(--cream); background: var(--input-bg-f); }
 
-/* Projekt 365 — sekcja CTA */
-.landing .lp-365 .lp-heading { color: var(--pl-ink); }
+/* Projekt 365 */
+.landing .lp-365 .lp-heading { color: var(--cream); }
+.landing .lp-subheading {
+  font-family: var(--font-m); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--green);
+  font-weight: 500; margin: .5rem 0 .75rem;
+}
 .landing .lp-list {
   list-style: none; padding: 0; margin: 1.25rem 0 1.75rem;
-  display: flex; flex-direction: column; gap: 0.85rem;
+  display: flex; flex-direction: column; gap: .8rem;
 }
 .landing .lp-list li {
-  position: relative; padding-left: 2rem;
-  font-size: 1.15rem; line-height: 1.5; color: var(--pl-ink);
+  position: relative; padding-left: 1.9rem;
+  font-family: var(--font-d); font-size: 1.05rem; line-height: 1.5; color: var(--muted);
 }
 .landing .lp-list li::before {
-  content: ""; position: absolute; left: 0; top: 0.3rem;
-  width: 1.2rem; height: 1.2rem;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolyline points='4 12.5 10 18.5 20 6' fill='none' stroke='%232b3aff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  content: ""; position: absolute; left: 0; top: .32rem; width: 1.05rem; height: 1.05rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolyline points='4 12.5 10 18.5 20 6' fill='none' stroke='%2322c55e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
 }
-.landing .lp-365-note {
-  font-size: 1.15rem; line-height: 1.55; color: var(--pl-muted); margin: 0 0 1.75rem;
-}
+.landing .lp-365-note { font-family: var(--font-d); font-size: 1rem; line-height: 1.55; color: var(--muted-2); margin: 0 0 1.75rem; }
 .landing .lp-365-btn { display: inline-block; }
-.landing .lp-subheading {
-  font-family: 'Space Grotesk', var(--font);
-  font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; margin: 0.75rem 0 0.5rem;
-  color: var(--pl-accent);
-}
 
 @media (max-width: 540px) {
-  .landing { padding: 3rem 1.25rem 3.5rem; }
+  .landing { padding: 3.5rem 1.25rem 3.5rem; }
 }
 
 /* ═══ Page hero (Projekt 365) — spójna tonacja z homepage ══════════════════════ */
