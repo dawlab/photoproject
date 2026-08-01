@@ -6,7 +6,7 @@
 <title>Projekt Lepiej</title>
 <meta name="description" content="Moje miejsce w internecie o dążeniu do bycia lepszym.">
 <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
-<link rel="stylesheet" href="static/css/fonts.css?v=lepiej-14"><link rel="stylesheet" href="static/css/main.css?v=lepiej-14">
+<link rel="stylesheet" href="static/css/fonts.css?v=lepiej-15"><link rel="stylesheet" href="static/css/main.css?v=lepiej-15">
 </head>
 <body>
 
@@ -23,23 +23,26 @@
         cyklicznych wiadomości, które wysyłam do zapisanych osób.
       </p>
 
-      <form id="newsletterForm" class="lp-form" novalidate>
+      <form id="newsletterForm" class="lp-form" action="https://assets.mailerlite.com/jsonp/2549397/forms/194596536347264400/subscribe" method="post" target="ml-hidden-frame" novalidate>
         <div class="lp-form-row">
           <label class="lp-label">Imię
-            <input type="text" id="nlName" name="name" placeholder="Twoje imię" required>
+            <input type="text" id="nlName" name="fields[name]" placeholder="Twoje imię" autocomplete="given-name" required>
           </label>
           <label class="lp-label">E-mail
-            <input type="email" id="nlEmail" name="email" placeholder="twoj@adres.pl" required>
+            <input type="email" id="nlEmail" name="fields[email]" placeholder="twoj@adres.pl" autocomplete="email" required>
           </label>
         </div>
-        <input type="text" id="nlWebsite" name="website" tabindex="-1" autocomplete="off" class="lp-honeypot" aria-hidden="true">
+        <input type="text" id="nlWebsite" tabindex="-1" autocomplete="off" class="lp-honeypot" aria-hidden="true">
         <label class="lp-consent">
           <input type="checkbox" id="nlConsent" required>
           <span>Akceptuję <a href="polityka-prywatnosci.html" target="_blank">politykę prywatności</a> i wyrażam zgodę na otrzymywanie wiadomości. <span class="req">*</span></span>
         </label>
+        <input type="hidden" name="ml-submit" value="1">
+        <input type="hidden" name="anticsrf" value="true">
         <div id="nlMsg" class="form-msg" style="display:none"></div>
         <button type="submit" class="btn-submit" id="nlBtn">Zapisuję się</button>
       </form>
+      <iframe name="ml-hidden-frame" style="display:none" aria-hidden="true" title="MailerLite"></iframe>
       <p class="lp-note">Warto dołączyć. Tych wiadomości nie pisze AI. W&nbsp;razie czego, zawsze możesz się wypisać.</p>
     </div>
 
@@ -94,8 +97,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="static/js/supabase.js?v=lepiej-14"></script>
-<script src="static/js/header.js?v=lepiej-14"></script>
+<script src="static/js/supabase.js?v=lepiej-15"></script>
+<script src="static/js/header.js?v=lepiej-15"></script>
 <script>
 // ─── Hero carousel ────────────────────────────────────────────────────────────
 (function(){
@@ -136,29 +139,28 @@
   start();
 })();
 
-// ─── Newsletter ───────────────────────────────────────────────────────────────
-document.getElementById('newsletterForm').addEventListener('submit', async e => {
+// ─── Newsletter (MailerLite) ──────────────────────────────────────────────────
+document.getElementById('newsletterForm').addEventListener('submit', function (e) {
   e.preventDefault();
+  const form = e.target;
   const btn = document.getElementById('nlBtn');
   const consent = document.getElementById('nlConsent');
   const name  = document.getElementById('nlName').value.trim();
-  const email = document.getElementById('nlEmail').value.trim().toLowerCase();
+  const email = document.getElementById('nlEmail').value.trim();
   document.getElementById('nlMsg').style.display = 'none';
 
-  if (document.getElementById('nlWebsite').value) { showNlMsg('✓ Dzięki! Jesteś na liście.', 'success'); return; } // honeypot
+  if (document.getElementById('nlWebsite').value) { showNlMsg('✓ Dzięki! Sprawdź skrzynkę i potwierdź zapis.', 'success'); return; } // honeypot
   if (!name) { showNlMsg('Podaj imię.', 'error'); return; }
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showNlMsg('Podaj poprawny adres e-mail.', 'error'); return; }
   if (!consent.checked) { showNlMsg('Aby się zapisać, zaakceptuj politykę prywatności.', 'error'); return; }
 
   btn.disabled = true; btn.textContent = 'Zapisywanie…';
-  const { error } = await sb.from('newsletter_subscribers').insert({ name, email, consent: true });
-  btn.disabled = false; btn.textContent = 'Zapisuję się';
-  if (error) {
-    showNlMsg('✗ ' + (error.code === '23505' ? 'Ten adres jest już zapisany.' : 'Coś poszło nie tak, spróbuj ponownie.'), 'error');
-    return;
-  }
-  showNlMsg('✓ Dzięki! Jesteś na liście.', 'success');
-  e.target.reset();
+  form.submit(); // POST do MailerLite (ukryta ramka ml-hidden-frame)
+  setTimeout(function () {
+    btn.disabled = false; btn.textContent = 'Zapisuję się';
+    showNlMsg('✓ Dzięki! Sprawdź skrzynkę i potwierdź zapis.', 'success');
+    form.reset();
+  }, 800);
 });
 function showNlMsg(text, type) {
   const msg = document.getElementById('nlMsg');
