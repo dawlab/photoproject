@@ -147,7 +147,7 @@ document.getElementById('newsletterForm').addEventListener('submit', async funct
   const email = document.getElementById('nlEmail').value.trim();
   document.getElementById('nlMsg').style.display = 'none';
 
-  if (document.getElementById('nlWebsite').value) { showNlMsg('✓ Dzięki! Sprawdź skrzynkę i potwierdź zapis.', 'success'); return; } // honeypot
+  if (document.getElementById('nlWebsite').value) { showNlMsg('✓ Zapisano! Za chwilę dostaniesz ode mnie wiadomość.', 'success'); return; } // honeypot
   if (!name) { showNlMsg('Podaj imię.', 'error'); return; }
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showNlMsg('Podaj poprawny adres e-mail.', 'error'); return; }
   if (!consent.checked) { showNlMsg('Aby się zapisać, zaakceptuj politykę prywatności.', 'error'); return; }
