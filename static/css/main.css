@@ -775,12 +775,12 @@ textarea { resize: vertical; min-height: 90px; }
 
 /* ═══ Landing — styl „kokpit" (ciemny, Archivo + IBM Plex Mono, zielony akcent) ═ */
 body:has(.landing) {
-  --bg: #0b0d10; --panel: #14181d; --panel-2: #1a1f26;
-  --line: rgba(225,232,240,.14); --line-soft: rgba(225,232,240,.07);
-  --cream: #f0f4f8; --muted: #9aa7b5; --muted-2: #67737f;
-  --steel: #96a3b2; --steel-dim: rgba(150,163,178,.5);
-  --green: #22c55e; --green-hi: #16a34a; --green-ink: #04160b;
-  --input-bg: rgba(225,232,240,.05); --input-bg-f: rgba(225,232,240,.09);
+  --bg: #f7f9fb; --panel: #ffffff; --panel-2: #f2f5f8;
+  --line: rgba(30,41,54,.16); --line-soft: rgba(30,41,54,.08);
+  --cream: #0d1319; --muted: #4c5866; --muted-2: #6b7684;
+  --steel: #5c6875; --steel-dim: rgba(92,104,117,.45);
+  --green: #16a34a; --green-hi: #15803d; --green-ink: #ffffff;
+  --input-bg: rgba(30,41,54,.03); --input-bg-f: rgba(30,41,54,.06);
   --font-d: 'Archivo', var(--font); --font-m: 'IBM Plex Mono', monospace;
   background: var(--bg); color: var(--cream);
   font-family: var(--font-d);
@@ -793,7 +793,7 @@ body:has(.landing)::after {
 
 /* ── Nagłówek / nawigacja na landingu (ciemny) ── */
 body:has(.landing) .site-header {
-  background: rgba(11,13,16,.72); backdrop-filter: blur(12px);
+  background: rgba(247,249,251,.85); backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line-soft);
 }
 body:has(.landing) .logo {
@@ -921,7 +921,7 @@ body:has(.landing) .site-footer__link:hover { color: var(--steel); }
 .landing .btn-submit:hover:not(:disabled),
 .landing .lp-365-btn:hover { background: var(--green-hi); color: var(--green-ink); transform: translateY(-2px); }
 .landing .form-msg--success { background: none; border: none; color: var(--green); padding: 0; font-family: var(--font-m); font-size: 12px; }
-.landing .form-msg--error { background: none; border: none; color: #ff6b57; padding: 0; font-family: var(--font-m); font-size: 12px; }
+.landing .form-msg--error { background: none; border: none; color: #c23a26; padding: 0; font-family: var(--font-m); font-size: 12px; }
 
 /* social — pigułki mono */
 .landing .lp-social-links { gap: 10px; margin-top: 1.5rem; }
@@ -953,6 +953,25 @@ body:has(.landing) .site-footer__link:hover { color: var(--steel); }
 }
 .landing .lp-365-note { font-family: var(--font-d); font-size: 1rem; line-height: 1.55; color: var(--muted-2); margin: 0 0 1.75rem; }
 .landing .lp-365-btn { display: inline-block; }
+
+/* nota pod formularzem zapisu */
+.landing .lp-note {
+  margin-top: 14px; font-family: var(--font-m); font-size: 10.5px; letter-spacing: .08em;
+  line-height: 1.7; color: var(--muted-2); max-width: 620px;
+}
+
+/* „Kim jestem" — lista faktów o autorze */
+.landing .lp-about-list {
+  list-style: none; padding: 0; margin: 1.25rem 0 0;
+  display: flex; flex-direction: column; gap: .7rem; max-width: 44rem;
+}
+.landing .lp-about-list li {
+  position: relative; padding-left: 1.6rem;
+  font-family: var(--font-d); font-size: 1.08rem; line-height: 1.5; color: var(--cream);
+}
+.landing .lp-about-list li::before {
+  content: ""; position: absolute; left: 0; top: .72em; width: .75rem; height: 2px; background: var(--green);
+}
 
 @media (max-width: 540px) {
   .landing { padding: 3.5rem 1.25rem 3.5rem; }

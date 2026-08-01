@@ -6,7 +6,7 @@
 <title>Projekt Lepiej</title>
 <meta name="description" content="Moje miejsce w internecie o dążeniu do bycia lepszym.">
 <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
-<link rel="stylesheet" href="static/css/fonts.css?v=lepiej-8"><link rel="stylesheet" href="static/css/main.css?v=lepiej-8">
+<link rel="stylesheet" href="static/css/fonts.css?v=lepiej-9"><link rel="stylesheet" href="static/css/main.css?v=lepiej-9">
 </head>
 <body>
 
@@ -15,40 +15,12 @@
 <main class="landing">
 
   <section class="lp-hero">
-    <p class="lp-eyebrow"><span>Optymalizuję życie pod większą wolność.</span><span>I dokumentuję to tutaj.</span></p>
-    <h1 class="lp-title">Projekt Lepiej – robię rzeczy dla <em>większej wolności</em></h1>
+    <p class="lp-eyebrow"><span>Cykliczne wiadomości.</span><span>O lepszym życiu.</span></p>
+    <h1 class="lp-title">Konkretne sposoby na <em>lepsze życie</em></h1>
     <p class="lp-lead">
-      Optymalizuję swoje życie pod wolność i dokumentuję to w ramach Projektu Lepiej.
-    </p>
-
-    <blockquote class="lp-callout">
-      <span class="lp-callout__label">Wolność dla mnie to stan, w którym…</span>
-      nie muszę sprzedawać swojego czasu za pieniądze przez 8 godzin dziennie,
-      aby dostać za to wynagrodzenie, które w większości wydam na podstawowe potrzeby.
-    </blockquote>
-
-    <p class="lp-text">
-      Wiem, że to może się nigdy nie udać, ale warto próbować – i takie próby tu dokumentuję.
-    </p>
-
-    <p class="lp-text lp-areas-intro">
-      Inne obszary, w których staram się żyć lepiej:
-    </p>
-    <ul class="lp-tags">
-      <li>Zdrowie</li>
-      <li>Rodzina</li>
-      <li>Związek</li>
-      <li>Hobby</li>
-      <li>Rozwój</li>
-    </ul>
-  </section>
-
-  <section class="lp-newsletter" id="newsletter">
-    <p class="lp-kicker">Newsletter</p>
-    <h2 class="lp-heading">Dołącz do czytelników</h2>
-    <p class="lp-text">
-      Co jakiś czas wysyłam list o tym, nad czym aktualnie pracuję i czego się nauczyłem.
-      Każde słowo piszę sam (myślę, że w internecie zalanym treściami AI warto to podkreślać).
+      Jestem Dawid i metodą prób i błędów staram się poprawiać swoje życie. Mam tu na myśli
+      obszary takie jak: zdrowie, rodzina, związek, hobby czy rozwój. Swoją drogę dokumentuję
+      w formie cyklicznych wiadomości, które wysyłam do zapisanych osób. Możesz być jedną z nich:
     </p>
 
     <form id="newsletterForm" class="lp-form" novalidate>
@@ -63,21 +35,23 @@
       <input type="text" id="nlWebsite" name="website" tabindex="-1" autocomplete="off" class="lp-honeypot" aria-hidden="true">
       <label class="lp-consent">
         <input type="checkbox" id="nlConsent" required>
-        <span>Akceptuję <a href="polityka-prywatnosci.html" target="_blank">politykę prywatności</a> i wyrażam zgodę na otrzymywanie newslettera. <span class="req">*</span></span>
+        <span>Akceptuję <a href="polityka-prywatnosci.html" target="_blank">politykę prywatności</a> i wyrażam zgodę na otrzymywanie wiadomości. <span class="req">*</span></span>
       </label>
       <div id="nlMsg" class="form-msg" style="display:none"></div>
       <button type="submit" class="btn-submit" id="nlBtn">Zapisuję się</button>
     </form>
+    <p class="lp-note">Warto dołączyć. Tych wiadomości nie pisze AI. W&nbsp;razie czego, zawsze możesz się wypisać.</p>
   </section>
 
-  <section class="lp-social">
-    <p class="lp-kicker">Kanały</p>
-    <h2 class="lp-heading">Czym jest Projekt Lepiej?</h2>
-    <p class="lp-text">
-      W 95% newsletterem, na który zapiszesz się powyżej. Pozostałe 5% to kanał na YouTube,
-      który dopiero zamierzam rozbudować. Jest też TikTok i Instagram.
-    </p>
-    <div class="lp-social-links" id="socialLinks"></div>
+  <section class="lp-about">
+    <p class="lp-kicker">O mnie</p>
+    <h2 class="lp-heading">Kim jestem?</h2>
+    <ul class="lp-about-list">
+      <li>32-latkiem</li>
+      <li>Tatą&nbsp;👧👦</li>
+      <li>Marketerem, który skręcił w stronę wdrożeń narzędzi AI</li>
+      <li>Lubię: nowe technologie, gadżety, fotografię, bieganie, czytać biografie znanych ludzi.</li>
+    </ul>
   </section>
 
   <section class="lp-365">
@@ -102,29 +76,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="static/js/supabase.js?v=lepiej-8"></script>
-<script src="static/js/header.js?v=lepiej-8"></script>
+<script src="static/js/supabase.js?v=lepiej-9"></script>
+<script src="static/js/header.js?v=lepiej-9"></script>
 <script>
-// ─── Social links (z site_settings) ───────────────────────────────────────────
-const SOCIAL_ICONS = {
-  social_youtube:   { label: 'YouTube',   svg: '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>' },
-  social_tiktok:    { label: 'TikTok',    svg: '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 6.7a5 5 0 0 1-3.5-4.2V2h-3.4v13.3a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9.1a6.3 6.3 0 1 0 5.4 6.2V8.8a8.3 8.3 0 0 0 4.5 1.4V6.9c-.3 0-.7-.1-1-.2z"/></svg>' },
-  social_instagram: { label: 'Instagram', svg: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.8" cy="6.2" r="1.2" fill="currentColor" stroke="none"/></svg>' },
-};
-
-(async () => {
-  const { data } = await sb.from('site_settings').select('*');
-  const s = {};
-  (data || []).forEach(r => { s[r.key] = r.value; });
-  const links = Object.entries(SOCIAL_ICONS)
-    .filter(([key]) => s[key])
-    .map(([key, ic]) =>
-      `<a href="${s[key]}" target="_blank" rel="noopener" class="lp-social-link" aria-label="${ic.label}">${ic.svg}<span>${ic.label}</span></a>`);
-  if (links.length) {
-    document.getElementById('socialLinks').innerHTML = links.join('');
-  }
-})();
-
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 document.getElementById('newsletterForm').addEventListener('submit', async e => {
   e.preventDefault();
