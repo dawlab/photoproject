@@ -993,6 +993,10 @@ body:has(.landing)::after {
 .landing .lp-about-list li::before {
   content: ""; position: absolute; left: 0; top: .72em; width: .75rem; height: 2px; background: var(--green);
 }
+.landing .lp-about-note {
+  font-family: var(--font-d); font-size: 1.05rem; line-height: 1.65; color: var(--muted);
+  margin: 1.4rem 0 0; max-width: 44rem;
+}
 
 @media (max-width: 540px) {
   .landing { padding: 3.5rem 1.25rem 3.5rem; }
