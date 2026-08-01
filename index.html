@@ -6,7 +6,7 @@
 <title>Projekt Lepiej</title>
 <meta name="description" content="Moje miejsce w internecie o dążeniu do bycia lepszym.">
 <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
-<link rel="stylesheet" href="static/css/fonts.css?v=lepiej-12"><link rel="stylesheet" href="static/css/main.css?v=lepiej-12">
+<link rel="stylesheet" href="static/css/fonts.css?v=lepiej-13"><link rel="stylesheet" href="static/css/main.css?v=lepiej-13">
 </head>
 <body>
 
@@ -15,31 +15,52 @@
 <main class="landing">
 
   <section class="lp-hero">
-    <h1 class="lp-title">Konkretne sposoby na <em>lepsze życie</em></h1>
-    <p class="lp-lead">
-      Jestem Dawid i metodą prób i błędów staram się poprawiać swoje życie. Mam tu na myśli
-      obszary takie jak: zdrowie, rodzina, związek, hobby czy rozwój. Swoją drogę dokumentuję
-      w formie cyklicznych wiadomości, które wysyłam do zapisanych osób. Możesz być jedną z nich:
-    </p>
+    <div class="lp-hero-main">
+      <h1 class="lp-title">Konkretne sposoby na <em>lepsze życie</em></h1>
+      <p class="lp-lead">
+        Jestem Dawid i metodą prób i błędów staram się poprawiać swoje życie. Mam tu na myśli
+        obszary takie jak: zdrowie, rodzina, związek, hobby czy rozwój. Swoją drogę dokumentuję
+        w formie cyklicznych wiadomości, które wysyłam do zapisanych osób. Możesz być jedną z nich:
+      </p>
 
-    <form id="newsletterForm" class="lp-form" novalidate>
-      <div class="lp-form-row">
-        <label class="lp-label">Imię
-          <input type="text" id="nlName" name="name" placeholder="Twoje imię" required>
+      <form id="newsletterForm" class="lp-form" novalidate>
+        <div class="lp-form-row">
+          <label class="lp-label">Imię
+            <input type="text" id="nlName" name="name" placeholder="Twoje imię" required>
+          </label>
+          <label class="lp-label">E-mail
+            <input type="email" id="nlEmail" name="email" placeholder="twoj@adres.pl" required>
+          </label>
+        </div>
+        <input type="text" id="nlWebsite" name="website" tabindex="-1" autocomplete="off" class="lp-honeypot" aria-hidden="true">
+        <label class="lp-consent">
+          <input type="checkbox" id="nlConsent" required>
+          <span>Akceptuję <a href="polityka-prywatnosci.html" target="_blank">politykę prywatności</a> i wyrażam zgodę na otrzymywanie wiadomości. <span class="req">*</span></span>
         </label>
-        <label class="lp-label">E-mail
-          <input type="email" id="nlEmail" name="email" placeholder="twoj@adres.pl" required>
-        </label>
+        <div id="nlMsg" class="form-msg" style="display:none"></div>
+        <button type="submit" class="btn-submit" id="nlBtn">Zapisuję się</button>
+      </form>
+      <p class="lp-note">Warto dołączyć. Tych wiadomości nie pisze AI. W&nbsp;razie czego, zawsze możesz się wypisać.</p>
+    </div>
+
+    <div class="lp-hero-media">
+      <div class="hero-carousel" id="heroCarousel">
+        <div class="hc-viewport">
+          <div class="hc-track" id="hcTrack">
+            <div class="hc-slide"><img src="static/hero/photo001.jpg" alt="Kadr z życia" width="975" height="1300" loading="eager"></div>
+            <div class="hc-slide"><img src="static/hero/photo002.jpg" alt="Kadr z życia" width="975" height="1300" loading="lazy"></div>
+            <div class="hc-slide"><img src="static/hero/photo003.jpg" alt="Kadr z życia" width="899" height="1300" loading="lazy"></div>
+          </div>
+        </div>
+        <button class="hc-arrow hc-prev" id="hcPrev" type="button" aria-label="Poprzednie zdjęcie">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+        </button>
+        <button class="hc-arrow hc-next" id="hcNext" type="button" aria-label="Następne zdjęcie">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+        <div class="hc-dots" id="hcDots" aria-hidden="true"></div>
       </div>
-      <input type="text" id="nlWebsite" name="website" tabindex="-1" autocomplete="off" class="lp-honeypot" aria-hidden="true">
-      <label class="lp-consent">
-        <input type="checkbox" id="nlConsent" required>
-        <span>Akceptuję <a href="polityka-prywatnosci.html" target="_blank">politykę prywatności</a> i wyrażam zgodę na otrzymywanie wiadomości. <span class="req">*</span></span>
-      </label>
-      <div id="nlMsg" class="form-msg" style="display:none"></div>
-      <button type="submit" class="btn-submit" id="nlBtn">Zapisuję się</button>
-    </form>
-    <p class="lp-note">Warto dołączyć. Tych wiadomości nie pisze AI. W&nbsp;razie czego, zawsze możesz się wypisać.</p>
+    </div>
   </section>
 
   <section class="lp-about">
@@ -73,9 +94,48 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="static/js/supabase.js?v=lepiej-12"></script>
-<script src="static/js/header.js?v=lepiej-12"></script>
+<script src="static/js/supabase.js?v=lepiej-13"></script>
+<script src="static/js/header.js?v=lepiej-13"></script>
 <script>
+// ─── Hero carousel ────────────────────────────────────────────────────────────
+(function(){
+  const track = document.getElementById('hcTrack');
+  const carousel = document.getElementById('heroCarousel');
+  if (!track || !carousel) return;
+  const count = track.children.length;
+  const dotsWrap = document.getElementById('hcDots');
+  let i = 0, timer = null;
+  for (let d = 0; d < count; d++) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'hc-dot' + (d === 0 ? ' active' : '');
+    b.setAttribute('aria-label', 'Zdjęcie ' + (d + 1));
+    b.addEventListener('click', () => { go(d); restart(); });
+    dotsWrap.appendChild(b);
+  }
+  const dots = dotsWrap.children;
+  function go(n) {
+    i = (n + count) % count;
+    track.style.transform = 'translateX(-' + (i * 100) + '%)';
+    for (let d = 0; d < dots.length; d++) dots[d].classList.toggle('active', d === i);
+  }
+  function start() { timer = setInterval(() => go(i + 1), 5000); }
+  function stop() { clearInterval(timer); }
+  function restart() { stop(); start(); }
+  document.getElementById('hcPrev').addEventListener('click', () => { go(i - 1); restart(); });
+  document.getElementById('hcNext').addEventListener('click', () => { go(i + 1); restart(); });
+  carousel.addEventListener('mouseenter', stop);
+  carousel.addEventListener('mouseleave', start);
+  let sx = null;
+  track.addEventListener('touchstart', e => { sx = e.touches[0].clientX; stop(); }, { passive: true });
+  track.addEventListener('touchend', e => {
+    if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    if (Math.abs(dx) > 40) go(dx < 0 ? i + 1 : i - 1);
+    sx = null; start();
+  });
+  start();
+})();
+
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 document.getElementById('newsletterForm').addEventListener('submit', async e => {
   e.preventDefault();

@@ -11,3 +11,6 @@ backup-supabase-*/
 # Python
 __pycache__/
 *.pyc
+
+# Oryginały zdjęć hero (w repo trzymamy zoptymalizowane z static/hero/)
+/photo00*.png
