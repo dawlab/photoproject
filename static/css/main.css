@@ -911,8 +911,8 @@ body:has(.landing)::after {
 .landing .lp-newsletter,
 .landing .lp-social,
 .landing .lp-365 {
-  margin: 0; padding: clamp(2.5rem,5vh,3.5rem) 0;
-  border-top: 1px solid var(--line-soft); background: none; border-radius: 0; box-shadow: none;
+  margin: 0; padding: clamp(2.25rem,4.5vh,3.25rem) 0 0;
+  background: none; border-radius: 0; box-shadow: none;
 }
 .landing .lp-newsletter::before { display: none; }
 
