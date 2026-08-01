@@ -6,7 +6,7 @@
 <title>Projekt Lepiej</title>
 <meta name="description" content="Moje miejsce w internecie o dążeniu do bycia lepszym.">
 <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
-<link rel="stylesheet" href="static/css/fonts.css?v=lepiej-17"><link rel="stylesheet" href="static/css/main.css?v=lepiej-17">
+<link rel="stylesheet" href="static/css/fonts.css?v=lepiej-18"><link rel="stylesheet" href="static/css/main.css?v=lepiej-18">
 </head>
 <body>
 
@@ -23,7 +23,7 @@
         cyklicznych wiadomości, które wysyłam do zapisanych osób.
       </p>
 
-      <form id="newsletterForm" class="lp-form" action="https://assets.mailerlite.com/jsonp/2549397/forms/194596536347264400/subscribe" method="post" target="ml-hidden-frame" novalidate>
+      <form id="newsletterForm" class="lp-form" action="https://assets.mailerlite.com/jsonp/2549397/forms/194596536347264400/subscribe" novalidate>
         <div class="lp-form-row">
           <label class="lp-label">Imię
             <input type="text" id="nlName" name="fields[name]" placeholder="Twoje imię" autocomplete="given-name" required>
@@ -37,12 +37,9 @@
           <input type="checkbox" id="nlConsent" required>
           <span>Akceptuję <a href="polityka-prywatnosci.html" target="_blank">politykę prywatności</a> i wyrażam zgodę na otrzymywanie wiadomości. <span class="req">*</span></span>
         </label>
-        <input type="hidden" name="ml-submit" value="1">
-        <input type="hidden" name="anticsrf" value="true">
         <div id="nlMsg" class="form-msg" style="display:none"></div>
         <button type="submit" class="btn-submit" id="nlBtn">Zapisuję się</button>
       </form>
-      <iframe name="ml-hidden-frame" style="display:none" aria-hidden="true" title="MailerLite"></iframe>
       <p class="lp-note">Warto dołączyć. Tych wiadomości nie pisze AI. W&nbsp;razie czego, zawsze możesz się wypisać.</p>
     </div>
 
@@ -98,8 +95,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="static/js/supabase.js?v=lepiej-17"></script>
-<script src="static/js/header.js?v=lepiej-17"></script>
+<script src="static/js/supabase.js?v=lepiej-18"></script>
+<script src="static/js/header.js?v=lepiej-18"></script>
 <script>
 // ─── Hero carousel ────────────────────────────────────────────────────────────
 (function(){
@@ -141,7 +138,7 @@
 })();
 
 // ─── Newsletter (MailerLite) ──────────────────────────────────────────────────
-document.getElementById('newsletterForm').addEventListener('submit', function (e) {
+document.getElementById('newsletterForm').addEventListener('submit', async function (e) {
   e.preventDefault();
   const form = e.target;
   const btn = document.getElementById('nlBtn');
@@ -156,12 +153,20 @@ document.getElementById('newsletterForm').addEventListener('submit', function (e
   if (!consent.checked) { showNlMsg('Aby się zapisać, zaakceptuj politykę prywatności.', 'error'); return; }
 
   btn.disabled = true; btn.textContent = 'Zapisywanie…';
-  form.submit(); // POST do MailerLite (ukryta ramka ml-hidden-frame)
-  setTimeout(function () {
-    btn.disabled = false; btn.textContent = 'Zapisuję się';
-    showNlMsg('✓ Dzięki! Sprawdź skrzynkę i potwierdź zapis.', 'success');
-    form.reset();
-  }, 800);
+  try {
+    const body = new URLSearchParams({ 'fields[name]': name, 'fields[email]': email, 'ml-submit': '1', 'anticsrf': 'true' });
+    const res = await fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+    const data = await res.json().catch(() => ({}));
+    if (data && data.success) {
+      showNlMsg('✓ Zapisano! Za chwilę dostaniesz ode mnie wiadomość.', 'success');
+      form.reset();
+    } else {
+      showNlMsg('Coś poszło nie tak, spróbuj ponownie za chwilę.', 'error');
+    }
+  } catch (_) {
+    showNlMsg('Coś poszło nie tak, spróbuj ponownie za chwilę.', 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Zapisuję się';
 });
 function showNlMsg(text, type) {
   const msg = document.getElementById('nlMsg');
