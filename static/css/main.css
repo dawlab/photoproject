@@ -14,7 +14,7 @@
 
 html { font-size: 16px; }
 body {
-  background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh;
+  background: var(--bg); color: var(--text); font-family: 'Archivo', var(--font); min-height: 100vh;
   /* iOS safe area: padding for home indicator */
   padding-bottom: env(safe-area-inset-bottom);
 }
@@ -82,7 +82,7 @@ a { color: inherit; text-decoration: none; }
   transition: background 0.12s, border-color 0.12s;
 }
 .nav-overlay__link:hover { background: var(--bg); }
-.nav-overlay__link.active { border-left-color: var(--accent); color: var(--accent); font-weight: 700; }
+.nav-overlay__link.active { border-left-color: var(--green); color: var(--green); font-weight: 700; }
 
 .site-nav { display: flex; gap: 4px; }
 
@@ -92,11 +92,12 @@ a { color: inherit; text-decoration: none; }
 }
 
 .nav-link {
-  font-size: 0.875rem; font-weight: 500; padding: 6px 14px;
-  border-radius: 999px; color: var(--muted); transition: background 0.15s, color 0.15s;
+  font-family: 'Archivo', var(--font);
+  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  padding: 8px 14px; border-radius: 999px; color: var(--muted); transition: background 0.15s, color 0.15s;
 }
-.nav-link:hover { color: var(--text); background: var(--bg); }
-.nav-link.active { background: var(--accent); color: #fff; }
+.nav-link:hover { color: var(--ink); background: var(--bg); }
+.nav-link.active { background: var(--green); color: #fff; }
 
 .admin-header-right { display: flex; align-items: center; gap: 10px; }
 
@@ -731,7 +732,8 @@ textarea { resize: vertical; min-height: 90px; }
   padding: 1.75rem 1.5rem calc(1.75rem + env(safe-area-inset-bottom));
   display: flex; align-items: center; justify-content: center;
   gap: 1.25rem; flex-wrap: wrap;
-  font-size: 0.8rem; color: var(--muted);
+  font-family: 'Archivo', var(--font);
+  font-size: 0.72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
 }
 .site-footer__link { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
 .site-footer__link:hover { color: var(--text); }
@@ -754,26 +756,24 @@ textarea { resize: vertical; min-height: 90px; }
   -webkit-text-fill-color: transparent; color: transparent;
 }
 
-/* ═══ Paleta — prosto, mocny akcent ════════════════════════════════════════════ */
+/* ═══ Paleta — jasna, akcent zielony ═══════════════════════════════════════════ */
 :root {
-  --pl-ink: #0f1115;
-  --pl-accent: #2b3aff;
-  --pl-accent-ink: #1e2ad6;
-  --pl-muted: #565b66;
-  --pl-line: #ececef;
+  --ink: #0d1319;
+  --green: #16a34a;
+  --green-hi: #15803d;
 }
 
-/* ═══ Logo w navbarze — bold wordmark ══════════════════════════════════════════ */
+/* ═══ Logo — odręczne (Caveat) ═════════════════════════════════════════════════ */
 .logo {
-  font-family: 'Space Grotesk', var(--font);
-  font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--pl-ink);
+  font-family: 'Caveat', cursive;
+  font-weight: 700; font-size: 1.9rem; line-height: 1; letter-spacing: 0; color: var(--ink);
 }
-.logo .logo-accent { color: var(--pl-accent); }
+.logo .logo-accent { color: var(--green); }
 
-/* Aktywna zakładka i podkreślenia w kolorze marki */
-.page-tab.active { border-bottom-color: var(--brand-blue-2); }
+/* Aktywna zakładka — akcent zielony */
+.page-tab.active { border-bottom-color: var(--green); color: var(--ink); }
 
-/* ═══ Landing — styl „kokpit" (ciemny, Archivo + IBM Plex Mono, zielony akcent) ═ */
+/* ═══ Landing — styl jasny (Archivo, logo Caveat, zielony akcent) ══════════════ */
 body:has(.landing) {
   --bg: #f7f9fb; --panel: #ffffff; --panel-2: #f2f5f8;
   --line: rgba(30,41,54,.16); --line-soft: rgba(30,41,54,.08);
@@ -781,7 +781,7 @@ body:has(.landing) {
   --steel: #5c6875; --steel-dim: rgba(92,104,117,.45);
   --green: #16a34a; --green-hi: #15803d; --green-ink: #ffffff;
   --input-bg: rgba(30,41,54,.03); --input-bg-f: rgba(30,41,54,.06);
-  --font-d: 'Archivo', var(--font); --font-m: 'IBM Plex Mono', monospace;
+  --font-d: 'Archivo', var(--font); --font-m: 'Archivo', var(--font);
   background: var(--bg); color: var(--cream);
   font-family: var(--font-d);
 }
@@ -791,34 +791,7 @@ body:has(.landing)::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }
 
-/* ── Nagłówek / nawigacja na landingu (ciemny) ── */
-body:has(.landing) .site-header {
-  background: rgba(247,249,251,.85); backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line-soft);
-}
-body:has(.landing) .logo {
-  font-family: var(--font-m); font-weight: 500; font-size: 12px;
-  letter-spacing: .2em; text-transform: uppercase; color: var(--cream);
-}
-body:has(.landing) .logo .logo-accent { color: var(--muted); background: none; -webkit-text-fill-color: currentColor; }
-body:has(.landing) .nav-link {
-  font-family: var(--font-m); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
-}
-body:has(.landing) .nav-link:hover { color: var(--steel); background: var(--input-bg-f); }
-body:has(.landing) .nav-link.active { background: var(--green); color: var(--green-ink); }
-body:has(.landing) .hamburger span { background: var(--steel); }
-body:has(.landing) .nav-overlay__links { background: var(--panel); }
-body:has(.landing) .nav-overlay__link { color: var(--cream); }
-body:has(.landing) .nav-overlay__link:hover { background: var(--input-bg-f); }
-body:has(.landing) .nav-overlay__link.active { border-left-color: var(--green); color: var(--green); }
-
-/* ── Stopka na landingu ── */
-body:has(.landing) .site-footer {
-  border-top: 1px solid var(--line-soft);
-  font-family: var(--font-m); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-2);
-}
-body:has(.landing) .site-footer__link { color: var(--muted-2); }
-body:has(.landing) .site-footer__link:hover { color: var(--steel); }
+/* Nagłówek, menu i stopka są teraz stylowane globalnie (spójnie na wszystkich stronach). */
 
 /* ── Kontener ── */
 .landing {
@@ -979,13 +952,9 @@ body:has(.landing) .site-footer__link:hover { color: var(--steel); }
 
 /* ═══ Page hero (Projekt 365) — spójna tonacja z homepage ══════════════════════ */
 .page-hero {
-  background: linear-gradient(180deg, var(--brand-tint), #ffffff);
-  border-bottom: 1px solid var(--brand-border);
+  background: var(--bg); border-bottom: 1px solid var(--border);
 }
 .page-hero-title {
-  font-family: 'Space Grotesk', var(--font);
-  font-weight: 700; letter-spacing: -0.03em;
-  background: var(--brand-grad);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
+  font-family: 'Archivo', var(--font);
+  font-weight: 800; letter-spacing: -0.02em; color: var(--ink);
 }
